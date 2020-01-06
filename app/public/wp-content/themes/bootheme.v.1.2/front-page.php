@@ -51,7 +51,7 @@
 
 <section class="lebas-carousel-container">
     <div class="lebas-carousel">
-    <h1>Don't imitate! but understand</h1>
+    <h1>Beautiful experience with deploy and Git</h1>
     </div>
 </section>
 
