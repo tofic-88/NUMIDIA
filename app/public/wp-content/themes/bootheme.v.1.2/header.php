@@ -17,7 +17,7 @@
 
 
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="#"><img src="<?php echo get_theme_file_uri('logo-1.png'); ?>" alt="logo" style="height: 100%;"/></a>
+      <a class="navbar-brand" href="#"><img src="<?php echo get_theme_file_uri('numidia-logo.png'); ?>" alt="logo" style="height: 100%;"/></a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="<?php esc_html_e( 'Toggle Navigation', 'theme-textdomain' ); ?>">
         <span class="navbar-toggler-icon"></span>
       </button>
