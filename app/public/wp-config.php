@@ -27,9 +27,9 @@ if (file_exists(dirname(__FILE__) . '/local.php')) {
 	define( 'DB_HOST', 'localhost' );
 } else {
 	// Live database settings
-	define( 'DB_NAME', 'u243682449_dia');
-	define( 'DB_USER', 'u243682449_diadmin' );
-	define( 'DB_PASSWORD', 'N0wAx6y+Zd');
+	define( 'DB_NAME', 'u243682449_nw' );
+	define( 'DB_USER', 'u243682449_nwadm' );
+	define( 'DB_PASSWORD', 'adonai2020' );
 	define( 'DB_HOST', 'localhost' );
 }
 
