@@ -447,6 +447,12 @@ class ET_Builder_Module_Woocommerce_Related_Products extends ET_Builder_Module {
 		 */
 		self::$static_props = $args;
 
+		// Force set product's class to ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder
+		// in TB so related product can outputs visible content based on pre-filled value in TB
+		if ( 'true' === et_()->array_get( $conditional_tags, 'is_tb', false ) ) {
+			add_filter( 'woocommerce_product_class', 'et_theme_builder_wc_product_class' );
+		}
+
 		add_filter(
 			'woocommerce_output_related_products_args',
 			array(

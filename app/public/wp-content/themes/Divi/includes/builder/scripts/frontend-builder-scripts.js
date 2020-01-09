@@ -5557,6 +5557,7 @@ var isBuilder = 'object' === typeof window.ET_Builder;
 					et_container_width_in_pixel = ( typeof et_container_css_width !== 'undefined' ) ? et_container_css_width.substr( -1, 1 ) !== '%' : '',
 					et_container_actual_width   = ( et_container_width_in_pixel ) ? $et_container.width() : ( ( $et_container.width() / 100 ) * window_width ), // $et_container.width() doesn't recognize pixel or percentage unit. It's our duty to understand what it returns and convert it properly
 					containerWidthChanged       = et_container_width !== et_container_actual_width;
+				var $dividers                   = $('.et_pb_top_inside_divider, .et_pb_bottom_inside_divider');
 
 				et_pb_resize_section_video_bg();
 				et_pb_center_video();
@@ -5658,6 +5659,13 @@ var isBuilder = 'object' === typeof window.ET_Builder;
 				if (grid_containers.length || isBuilder) {
 					$(grid_containers).each(function () {
 						window.et_pb_set_responsive_grid($(this), '.et_pb_grid_item');
+					});
+				}
+
+				// Re-apply module divider fix
+				if (!isBuilder && $dividers.length) {
+					$dividers.each(function() {
+						etFixDividerSpacing($(this));
 					});
 				}
 			} );
@@ -6353,6 +6361,34 @@ var isBuilder = 'object' === typeof window.ET_Builder;
 		});
 	};
 
+	/**
+	 * Fix unwanted divider spacing (mostly in webkit) when svg image is repeated and the actual
+	 * svg image dimension width is in decimal
+	 *
+	 * @since 4.0.10
+	 *
+	 * @param {object} $divider jQuery object of `.et_pb_top_inside_divider` or `.et_pb_bottom_inside_divider`
+	 */
+	window.etFixDividerSpacing = function ($divider) {
+		// Clear current inline style first so builder's outputted css is retrieved
+		$divider.attr('style', '');
+
+		// Get divider variables
+		var backgroundSize = $divider.css('backgroundSize').split(' ');
+		var horizontalSize = backgroundSize[0];
+		var verticalSize   = backgroundSize[1];
+		var hasValidSizes  = 'string' === typeof horizontalSize && 'string' === typeof verticalSize;
+
+		// Is not having default value + using percentage based value
+		if (hasValidSizes && '100%' !== horizontalSize && '%' === horizontalSize.substr(-1, 1)) {
+			var dividerWidth     = parseFloat($divider.outerWidth());
+			var imageWidth       = (parseFloat(horizontalSize) / 100) * dividerWidth;
+			var backgroundSizePx = parseInt(imageWidth) + 'px ' + verticalSize;
+
+			$divider.css('backgroundSize', backgroundSizePx);
+		}
+	}
+
 	if ( window.et_pb_custom && window.et_pb_custom.is_ab_testing_active && 'yes' === window.et_pb_custom.is_cache_plugin_active ) {
 		// update the window.et_load_event_fired variable to initiate the scripts properly
 		$( window ).load( function() {
@@ -6400,8 +6436,10 @@ var isBuilder = 'object' === typeof window.ET_Builder;
 
 	$(document).ready(function() {
 		// Hover transition are disabled for section dividers to prevent visual glitches while document is loading,
-		// we can enable them again now.
-		$('.et_pb_top_inside_divider.et-no-transition, .et_pb_bottom_inside_divider.et-no-transition').removeClass('et-no-transition');
+		// we can enable them again now. Also, execute unwanted divider spacing
+		$('.et_pb_top_inside_divider.et-no-transition, .et_pb_bottom_inside_divider.et-no-transition').removeClass('et-no-transition').each(function() {
+			etFixDividerSpacing($(this));
+		});
 
 		// Set a delay just to make sure all modules are ready before we append box shadow container.
 		// Similar approach exists on VB custom CSS output.

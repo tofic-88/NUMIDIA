@@ -352,7 +352,8 @@ class ET_Builder_Module_Fullwidth_Post_Title extends ET_Builder_Module {
 			if ( is_et_pb_preview() && isset( $_POST['post_title'] ) && wp_verify_nonce( $_POST['et_pb_preview_nonce'], 'et_pb_preview_nonce' ) ) {
 				$post_title = esc_html( sanitize_text_field( wp_unslash( $_POST['post_title'] ) ) );
 			} else {
-				$post_title = esc_html( et_builder_get_current_title() );
+				// Unescaped for backwards compat reasons.
+				$post_title = et_core_intentionally_unescaped( et_builder_get_current_title(), 'html' );
 			}
 
 			$output .= $multi_view->render_element( array(

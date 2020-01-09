@@ -34,7 +34,7 @@ class ET_Builder_Module_Woocommerce_Additional_Info extends ET_Builder_Module {
 			),
 			'advanced' => array(
 				'toggles' => array(
-					'text' => array(
+					'text'   => array(
 						'title'             => esc_html__( 'Text', 'et_builder' ),
 						'priority'          => 45,
 						'tabbed_subtoggles' => true,
@@ -49,6 +49,9 @@ class ET_Builder_Module_Woocommerce_Additional_Info extends ET_Builder_Module {
 								'icon' => 'text-link',
 							),
 						),
+					),
+					'header' => array(
+						'title' => esc_html__( 'Title Text', 'et_builder' ),
 					),
 				),
 			),
@@ -101,6 +104,7 @@ class ET_Builder_Module_Woocommerce_Additional_Info extends ET_Builder_Module {
 					'line_height' => array(
 						'default' => '1em',
 					),
+					'toggle_slug' => 'header',
 				),
 				'attribute' => array(
 					'label'       => esc_html__( 'Attribute', 'et_builder' ),

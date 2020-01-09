@@ -87,10 +87,12 @@ class ET_Builder_Module_Signup extends ET_Builder_Module_Type_WithSpamProtection
 						'tabbed_subtoggles' => true,
 						'bb_icons_support'  => true,
 						'css'               => array(
-							'link'  => "{$this->main_css_element} .et_pb_newsletter_description a, {$this->main_css_element} .et_pb_newsletter_form a",
-							'ul'    => "{$this->main_css_element} .et_pb_newsletter_description ul li, {$this->main_css_element} .et_pb_newsletter_form ul li",
-							'ol'    => "{$this->main_css_element} .et_pb_newsletter_description ol li, {$this->main_css_element} .et_pb_newsletter_form ol li",
-							'quote' => "{$this->main_css_element} .et_pb_newsletter_description blockquote, {$this->main_css_element} .et_pb_newsletter_form blockquote",
+							'link'           => "{$this->main_css_element} .et_pb_newsletter_description a, {$this->main_css_element} .et_pb_newsletter_form a",
+							'ul'             => "{$this->main_css_element} .et_pb_newsletter_description ul li, {$this->main_css_element} .et_pb_newsletter_form ul li",
+							'ul_item_indent' => "{$this->main_css_element} .et_pb_newsletter_description ul, {$this->main_css_element} .et_pb_newsletter_form ul",
+							'ol'             => "{$this->main_css_element} .et_pb_newsletter_description ol li, {$this->main_css_element} .et_pb_newsletter_form ol li",
+							'ol_item_indent' => "{$this->main_css_element} .et_pb_newsletter_description ol, {$this->main_css_element} .et_pb_newsletter_form ol",
+							'quote'          => "{$this->main_css_element} .et_pb_newsletter_description blockquote, {$this->main_css_element} .et_pb_newsletter_form blockquote",
 						),
 					),
 				),
@@ -338,6 +340,7 @@ class ET_Builder_Module_Signup extends ET_Builder_Module_Type_WithSpamProtection
 				'show_if'         => $show_if_conditions,
 				'class'           => 'et_pb_email_' . $field_id,
 				'toggle_slug'     => 'provider',
+				'not_required'    => self::$_->array_get( $field_info, 'not_required', false ),
 			);
 		}
 

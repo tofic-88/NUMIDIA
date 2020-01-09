@@ -308,6 +308,17 @@ function et_theme_builder_frontend_render_layout( $layout_type, $layout_id ) {
 
 	et_theme_builder_frontend_render_common_wrappers( $layout_type, true );
 
+	/**
+	 * Fires after Theme Builder layout opening wrappers have been output but before any
+	 * other processing has been done (e.g. replacing the current post).
+	 *
+	 * @since 4.0.10
+	 *
+	 * @param string $layout_type
+	 * @param integer $layout_id
+	 */
+	do_action( 'et_theme_builder_after_layout_opening_wrappers', $layout_type, $layout_id );
+
 	ET_Builder_Element::begin_theme_builder_layout( $layout_id );
 
 	ET_Post_Stack::replace( $layout );
@@ -339,6 +350,17 @@ function et_theme_builder_frontend_render_layout( $layout_type, $layout_id ) {
 	ET_Post_Stack::restore();
 
 	ET_Builder_Element::end_theme_builder_layout();
+
+	/**
+	 * Fires before Theme Builder layout closing wrappers have been output and after any
+	 * other processing has been done (e.g. replacing the current post).
+	 *
+	 * @since 4.0.10
+	 *
+	 * @param string $layout_type
+	 * @param integer $layout_id
+	 */
+	do_action( 'et_theme_builder_before_layout_closing_wrappers', $layout_type, $layout_id );
 
 	et_theme_builder_frontend_render_common_wrappers( $layout_type, false );
 }

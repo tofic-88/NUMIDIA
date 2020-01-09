@@ -610,7 +610,7 @@ class ET_Builder_Module_Gallery extends ET_Builder_Module {
 
 			if ( 'on' !== $fullwidth ) {
 				$image_attrs['srcset'] = $attachment->image_src_full[0] . ' 479w, ' . $attachment->image_src_thumb[0] . ' 480w';
-				$image_attrs['sizes']  = '(max-width:479px) 479w, 100vw';
+				$image_attrs['sizes']  = '(max-width:479px) 479px, 100vw';
 			}
 
 			$image_output = sprintf(

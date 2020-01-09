@@ -212,13 +212,24 @@ function et_fb_enqueue_assets() {
 		$dependencies_list[] = 'et-shortcodes-js';
 	}
 
+	$cached_assets_deps = array();
 	if ( defined( 'ET_BUILDER_CACHE_ASSETS' ) && ET_BUILDER_CACHE_ASSETS ) {
 		// Use cached files for helpers and definitions
 		foreach ( array( 'helpers', 'definitions' ) as $asset ) {
 			if ( $url = et_()->array_get( et_fb_get_dynamic_asset( $asset ), 'url' ) ) {
 				// The asset exists, we can add it to bundle's dependencies
-				$key = "et-dynamic-asset-$asset";
-				wp_register_script( $key, $url, array(), ET_BUILDER_VERSION );
+				$key                = "et-dynamic-asset-$asset";
+				/**
+				 * Filters the dependencies of cached assets.
+				 *
+				 * @since ?
+				 *
+				 * @param array $deps.
+				 * @param string $key.
+				 */
+				$deps               = apply_filters( 'et_builder_dynamic_asset_deps', array(), $key );
+				$cached_assets_deps = array_merge( $cached_assets_deps, $deps );
+				wp_register_script( $key, $url, $deps, ET_BUILDER_VERSION );
 				$dependencies_list[] = $key;
 			}
 		}
@@ -255,7 +266,7 @@ function et_fb_enqueue_assets() {
 
 	if ( $is_production && $external_assets && ! et_builder_bfb_enabled() && ! et_builder_tb_enabled() ) {
 		// Set bundle deps.
-		et_fb_app_only_bundle_deps( $fb_bundle_dependencies );
+		et_fb_app_only_bundle_deps( array_merge( $fb_bundle_dependencies, $cached_assets_deps ) );
 		add_filter( 'script_loader_tag', 'et_fb_app_src', 10, 3 );
 		// Enqueue the top window VB boot script.
 		et_fb_enqueue_bundle( 'et-frontend-builder', 'boot.js', $fb_bundle_dependencies );

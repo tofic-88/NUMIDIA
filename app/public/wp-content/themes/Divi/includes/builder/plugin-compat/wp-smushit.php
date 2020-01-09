@@ -69,9 +69,20 @@ class ET_Builder_Plugin_Compat_Smush extends ET_Builder_Plugin_Compat_Base {
 			$class = $this->get_smush_class();
 
 			if ( ! empty( $class ) ) {
-				$lazyload = call_user_func( array( $class, 'get_instance' ) )->core()->mod->lazy;
+				$mod   = call_user_func( array( $class, 'get_instance' ) )->core()->mod;
+				$props = get_object_vars( $mod );
 
-				remove_action( 'wp_enqueue_scripts', array( $lazyload, 'enqueue_assets' ) );
+				if ( isset( $props['lazy'] ) ) {
+					// In Smush 3.3+, lazy loading enqueues and inlines several
+					// scripts but the instance is public so we can get a
+					// reference and remove the enqueuing action.
+					remove_action( 'wp_enqueue_scripts', array( $props['lazy'], 'enqueue_assets' ) );
+				} else {
+					// The lazy loading instance is private in Smush 3.2.* so
+					// we dequeue the script it enqueues as those versions
+					// only load a single script.
+					add_action( 'wp_enqueue_scripts', array( $this, 'dequeue_lazy_load' ) );
+				}
 			}
 		}
 	}
@@ -112,6 +123,17 @@ class ET_Builder_Plugin_Compat_Smush extends ET_Builder_Plugin_Compat_Base {
 		}
 
 		return '';
+	}
+
+	/**
+	 * Dequeue Smush lazy load in builder.
+	 *
+	 * @since 4.0.10
+	 */
+	public function dequeue_lazy_load() {
+		if ( wp_script_is( 'smush-lazy-load', 'enqueued' ) ) {
+			wp_dequeue_script( 'smush-lazy-load' );
+		}
 	}
 }
 

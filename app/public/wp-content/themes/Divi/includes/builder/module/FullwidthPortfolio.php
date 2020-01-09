@@ -462,7 +462,7 @@ class ET_Builder_Module_Fullwidth_Portfolio extends ET_Builder_Module_Type_PostB
 
 							if ( $full_src ) {
 								$image_attrs['srcset'] = $full_src . ' 479w, ' . $thumb_src . ' 480w';
-								$image_attrs['sizes']  = '(max-width:479px) 479w, 100vw';
+								$image_attrs['sizes']  = '(max-width:479px) 479px, 100vw';
 							}
 
 							$this->render_image( $thumb_src, $image_attrs );

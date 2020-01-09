@@ -826,7 +826,7 @@ class ET_Core_Data_Utils {
 	 * @return WP_Filesystem_Base {@see ET_Core_PageResource::wpfs()}
 	 */
 	public function WPFS() {
-		return ET_Core_PageResource::wpfs();
+		return et_core_cache_dir()->wpfs;
 	}
 
 	/**

@@ -829,28 +829,6 @@ if ( et_is_woocommerce_plugin_active() ) {
 		}
 	}
 
-	/**
-	 * Class ET_WC_Product_Variable_TB_Placeholder
-	 *
-	 * Variable product class extension for displaying WooCommerce placeholder on Theme Builder
-	 */
-	class ET_WC_Product_Variable_TB_Placeholder extends WC_Product_Variable {
-		/**
-		 * Add to cart's <select> requires variable product type and get_available_variations() method
-		 * outputting product->children value. Filtering get_available_variations() can't be done so
-		 * extending WC_Product_Variable and set fixed value for get_available_variations() method
-		 *
-		 * @since 4.0.1
-		 *
-		 * @return array
-		 */
-		function get_available_variations() {
-			$variation_1 = new WC_Product_Simple();
-
-			return array( $variation_1 );
-		}
-	}
-
 	add_filter(
 		'et_builder_get_woo_default_columns',
 		array(

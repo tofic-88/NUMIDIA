@@ -40,6 +40,7 @@ abstract class ET_Builder_Module_Type_PostContent extends ET_Builder_Module {
 						'main'        => "{$this->main_css_element} ul li",
 						'color'       => "{$this->main_css_element}.et_pb_post_content ul li",
 						'line_height' => "{$this->main_css_element} ul li",
+						'item_indent' => "{$this->main_css_element} ul",
 					),
 					'line_height' => array(
 						'default' => '1em',
@@ -56,6 +57,7 @@ abstract class ET_Builder_Module_Type_PostContent extends ET_Builder_Module {
 						'main'        => "{$this->main_css_element} ol",
 						'color'       => "{$this->main_css_element}.et_pb_post_content ol",
 						'line_height' => "{$this->main_css_element} ol li",
+						'item_indent' => "{$this->main_css_element} ol",
 					),
 					'line_height' => array(
 						'default' => '1em',
@@ -450,6 +452,7 @@ abstract class ET_Builder_Module_Type_PostContent extends ET_Builder_Module {
 		$parallax_image_background    = $this->get_parallax_image_background();
 		$data_background_layout       = '';
 		$data_background_layout_hover = '';
+		$data_remove_top_window_classname = '';
 
 		if ( $background_layout_hover_enabled ) {
 			$background_layout       = isset( $this->props['background_layout'] ) ? $this->props['background_layout'] :
@@ -467,8 +470,17 @@ abstract class ET_Builder_Module_Type_PostContent extends ET_Builder_Module {
 			);
 		}
 
+		// Added data attribute which tells VB to remove oder classname after DOMs have been moved
+		// and builder is loaded to prevent builder UI style from being overwritten
+		if ( et_fb_enabled() ) {
+			$data_remove_top_window_classname = sprintf(
+				' data-remove-top-window-classname="%1$s""',
+				esc_attr( ET_Builder_Element::get_module_order_class( $render_slug ) )
+			);
+		}
+
 		$output = sprintf(
-			'<div%3$s class="%2$s"%6$s%7$s>
+			'<div%3$s class="%2$s"%6$s%7$s%8$s>
 				%5$s
 				%4$s
 				%1$s
@@ -479,7 +491,8 @@ abstract class ET_Builder_Module_Type_PostContent extends ET_Builder_Module {
 			$video_background,
 			$parallax_image_background, // #5
 			et_core_esc_previously( $data_background_layout ),
-			et_core_esc_previously( $data_background_layout_hover )
+			et_core_esc_previously( $data_background_layout_hover ),
+			et_core_esc_previously( $data_remove_top_window_classname )
 		);
 
 		return $output;

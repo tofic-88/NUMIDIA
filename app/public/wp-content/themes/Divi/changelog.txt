@@ -1,3 +1,127 @@
+version 4.0.11 ( updated 01-02-2020 )
+- Fix issue with Google fonts not loading.
+- Fix syntax error that occured on retired PHP versions.
+	* includes/builder/feature/AjaxCache.php
+	* includes/builder/feature/custom-defaults/History.php
+
+version 4.0.10 ( updated 01-02-2020 )
+- Fixed code injection vulnerability. For more information, please read the full disclosure: https://us7.campaign-archive.com/?u=9ae7aa91c578052b052b864d6&id=e3532c8cb1
+- Fixed an issue with reCAPTCHA Minimum Score option where the value would validate to a size unit.
+- Fixed Cannot modify header information warning.
+- Fixed broken theme builder when add-ons using mechanism which was not compatible with how Theme Builder render WooCommerce module's placeholder data.
+- Added a new "Edit Template" button to the Admin Bar when the current page is affected by a Theme Builder template.
+- Fixed module borders not being visible when a video column background is set.
+- Fixed Smush 3.2.* compatibility.
+- Duplicated Theme Builder templates with custom titles will now have a "Copy" suffix appended.
+- Fixed inaccurate import UI behaviour when the import time takes longer than heartbeat interval.
+- Fixed compatibility with the TablePress plugin when searching.
+- Fixed HTML in Post Title Dynamic Content always being escaped.
+- Fixed Theme Builder Visual Builder jumpting to top when you change the preview mode.
+- Fixed Theme Builder overwriting current page builder's style.
+- Added placeholders when using Woo Gallery module w/ "This Product" in Theme Builder layout.
+- Toggling a Theme Builder template settings will now toggle off its counterpart (Use On vs Exclude From).
+- Fixed responsive/hover content getting stripped when has a link with a target attribute.
+- Fixed responsive content not visible on page load when it has same value as desktop mode.
+- Fixed Divi Testimonial Slider causing the Visual Builder to reload itself.
+- Global Defaults are now exported and imported in the Theme Builder.
+- Fixed "Syntax error, unrecognized expression: unsupported pseudo: ui-sortable" error caused by user's custom javascript widget dynamically inserted jQuery script.
+- Added icon/image alignment option in Blurb module.
+- Fixed Theme Builder to show Category image on Product category archive page.
+- Fixed Invalid Responsive Images SRCSET Attribute Value.
+- Fixed WooCommerce structured data not being output when using a Theme Builder Body layout.
+- Fixed Copy/Paste text fields not working correctly after reset.
+- Added Copy/Paste between Text module Heading option group and Woo modules that contains the Title option group.
+- Fixed Editors not being able to use the Theme Builder even if it gets enabled for them.
+- Reduce server load by implementing several performance optimizations.
+- Fixed wrong syntax for responsive image sizes attributes for thumbnail size images.
+- Fixed Toolset Views {!{ ... }!} shortcode compatibility with Theme Builder layouts.
+- Fixed inability to add Active Campaign account on email optin module due to Form ID being marked as required field.
+- Fixed broken visual builder when jQuery v3.x gets queued by plugins instead of default v1.12.x.
+- Fixed saving post in builder triggers purging all cache.
+- Fixed compatibility with WP Job Manager.
+- Fixed layout settings such as Custom CSS not being exported in Theme Builder.
+- Added a new "Category Description" Dynamic Content option when editing layouts in the Theme Builder.
+- Fixed unwanted 1px vertical space that appears on certain divider repeat on chrome and safari.
+- Fixed the Visual Builder not opening the last edited layout when a builder reload is triggered.
+- Added new "Specific Author Page By Role" options for Theme Builder templates.
+- Fixed issue where list Item Indent is different on VB vs front end.
+- Added a new "Author Page Link" Dynamic Content option.
+- Fixed Post Title and Fullwidth Post Title modules not allowing HTML in the titles anymore.
+- Added missing Google fonts.
+- Fixed a JavaScript error in the WooCommerce admin page.
+- Fixed a PHP warning in Support Center that occurred when credentials had an incorrect value type.
+- Improved Support Center handling of wp-debug.log when no errors have yet triggered its creation.
+- Fix a PHP filesystem error that occured on some hosting environments.
+- Fixed footer widgets disappearing when a Theme Builder footer layout is being used.
+- Fixed Cannot read property 'top' of undefined error due to recent fix related to primary nav + hide nav until scroll.
+- Fixed unwanted padding-top that is being added when primary nav has transparent background color and has its hide nav until scroll option active.
+- Fixed post detail pages with the Fullwidth layout assigned having their row width be set to 100%.
+	* core/admin/js/core.js
+	* core/components/PageResource.php
+	* core/components/Portability.php
+	* core/components/SupportCenter.php
+	* core/components/cache/Directory.php
+	* core/components/data/Utils.php
+	* core/functions.php
+	* core/json-data/google-fonts.json
+	* css/main-styles.css
+	* epanel/custom_functions.php
+	* footer.php
+	* includes/builder/class-et-builder-element.php
+	* includes/builder/class-et-builder-settings.php
+	* includes/builder/core.php
+	* includes/builder/feature/AjaxCache.php
+	* includes/builder/feature/custom-defaults/History.php
+	* includes/builder/feature/dynamic-content.php
+	* includes/builder/feature/woocommerce-modules.php
+	* includes/builder/framework.php
+	* includes/builder/frontend-builder/assets.php
+	* includes/builder/frontend-builder/bundle.js
+	* includes/builder/frontend-builder/helpers.php
+	* includes/builder/frontend-builder/i18n/generic.php
+	* includes/builder/frontend-builder/i18n/portability.php
+	* includes/builder/frontend-builder/theme-builder/ThemeBuilderApiErrors.php
+	* includes/builder/frontend-builder/theme-builder/WoocommerceProductVariablePlaceholder.php
+	* includes/builder/frontend-builder/theme-builder/WoocommerceProductVariablePlaceholderDataStoreCPT.php
+	* includes/builder/frontend-builder/theme-builder/admin.php
+	* includes/builder/frontend-builder/theme-builder/api.php
+	* includes/builder/frontend-builder/theme-builder/dynamic-content.php
+	* includes/builder/frontend-builder/theme-builder/frontend.php
+	* includes/builder/frontend-builder/theme-builder/template-setting-validations.php
+	* includes/builder/frontend-builder/theme-builder/theme-builder.php
+	* includes/builder/frontend-builder/theme-builder/woocommerce.php
+	* includes/builder/functions.php
+	* includes/builder/google-fonts-data.php
+	* includes/builder/module/Blog.php
+	* includes/builder/module/Blurb.php
+	* includes/builder/module/FullwidthPortfolio.php
+	* includes/builder/module/FullwidthPostContent.php
+	* includes/builder/module/FullwidthPostSlider.php
+	* includes/builder/module/FullwidthPostTitle.php
+	* includes/builder/module/Gallery.php
+	* includes/builder/module/Portfolio.php
+	* includes/builder/module/PostContent.php
+	* includes/builder/module/PostSlider.php
+	* includes/builder/module/PostTitle.php
+	* includes/builder/module/Signup.php
+	* includes/builder/module/Text.php
+	* includes/builder/module/helpers/MultiViewOptions.php
+	* includes/builder/module/helpers/WooCommerceModules.php
+	* includes/builder/module/type/PostContent.php
+	* includes/builder/module/type/WithSpamProtection.php
+	* includes/builder/module/woocommerce/AdditionalInfo.php
+	* includes/builder/module/woocommerce/Price.php
+	* includes/builder/module/woocommerce/RelatedProducts.php
+	* includes/builder/module/woocommerce/Title.php
+	* includes/builder/module/woocommerce/Upsells.php
+	* includes/builder/plugin-compat/divi-testimonial-slider.php
+	* includes/builder/plugin-compat/woocommerce.php
+	* includes/builder/plugin-compat/wp-job-manager.php
+	* includes/builder/plugin-compat/wp-smushit.php
+	* includes/builder/plugin-compat/wp-views.php
+	* includes/builder/scripts/frontend-builder-scripts.js
+	* js/custom.js
+
 version 4.0.9 ( updated 12-10-2019 )
 - Fixed empty p tags appearing around builder elements in certain cases.
 - Fixed Social Media Follow padding setting not working on post.

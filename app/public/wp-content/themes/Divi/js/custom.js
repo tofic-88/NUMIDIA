@@ -463,8 +463,25 @@ var isBuilder = 'object' === typeof window.ET_Builder;
 				$wooCommerceNotice.attr('data-position-set', 'yes');
 			}
 
-			// Specific adjustment required for transparent nav + not vertical nav
-			if (window.et_is_transparent_nav && !window.et_is_vertical_nav) {
+			// Specific adjustment required for transparent nav + not vertical nav + (not hidden nav
+			// OR hidden nav but document height is shorter than "viewport" height)
+			// NOTES:
+			// 1. hidden nav: nav is initially hidden then appears as the window is scrolled)
+			// 2. in hidden nav, nav is displayed as window is scrolled. If document height is
+			//    shorter than viewport, vertical scroll doesn't exist and nav is directly rendered.
+			//    Thus, transparent nav adjustment need to be applied if body is shorter than window
+			// 3. Hidden nav only works on desktop breakpoint. Nav is always displayed on tablet
+			//    and smaller breakpoints
+			// 4. "viewport" height calculation needs to be identical with viewport calculation used
+			//    at `et_hide_nav_transform()` to make sure that when nav is displayed due to short
+			//    document height, the padding gets added
+			var bodyHeight                = $(document).height();
+			var viewportHeight            = $(window).height() + et_header_height + 200;
+			var isBodyShorterThanViewport = viewportHeight > bodyHeight;
+			var isDesktop                 = parseInt($(window).width()) > 980;
+			var isHideNavDesktop          = isDesktop && et_hide_nav;
+
+			if (window.et_is_transparent_nav && !window.et_is_vertical_nav && (!isHideNavDesktop || isBodyShorterThanViewport)) {
 
 				if (!$('body').hasClass('et-bfb')) {
 					// Add class for first row for custom section padding purpose
@@ -1053,11 +1070,15 @@ var isBuilder = 'object' === typeof window.ET_Builder;
 				}
 
 				if ( et_is_fixed_nav ) {
+					// Changing waypoint selector to first section's row / module when transparent
+					// nav is used only valid if the first section position is on offset top = 0
+					// (or 32 when admin bar exist) to avoid `et-fixed-nav` classname being added
+					// too late when the window is scrolled too way down
+					var firstRowOffsetTop    = $et_pb_first_row.length > 0 ? $et_pb_first_row.offset().top : 0;
+					var maxFirstRowOffsetTop = $('#wpadminbar').length ? $('#wpadminbar').height() : 0;
+					var isFirstRowOnTop      = firstRowOffsetTop <= maxFirstRowOffsetTop;
 
-					// We don't want product pages with divi-builder to trigger fixed navigation
-					// based on builder row/module position
-					if (window.et_is_transparent_nav && ! (window.et_is_vertical_nav || $('body.woocommerce.single-product').length) && $et_pb_first_row.length) {
-
+					if (isFirstRowOnTop && window.et_is_transparent_nav && !window.et_is_vertical_nav && $et_pb_first_row.length) {
 						// Fullscreen section at the first row requires specific adjustment
 						if ($et_pb_first_row.is('.et_pb_fullwidth_section')) {
 							$waypoint_selector = $et_pb_first_row.children('.et_pb_module:visible:first');
@@ -1072,7 +1093,7 @@ var isBuilder = 'object' === typeof window.ET_Builder;
 						if (! $waypoint_selector.length) {
 							$waypoint_selector = $('body.et_pb_pagebuilder_layout .et_pb_module:visible:first');
 						}
-					} else if (window.et_is_transparent_nav && ! window.et_is_vertical_nav && $et_main_content_first_row.length) {
+					} else if (isFirstRowOnTop && window.et_is_transparent_nav && ! window.et_is_vertical_nav && $et_main_content_first_row.length) {
 						$waypoint_selector = $('#content-area');
 					} else {
 						$waypoint_selector = $('#main-content');

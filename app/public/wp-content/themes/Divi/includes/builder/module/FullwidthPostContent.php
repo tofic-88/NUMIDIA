@@ -12,7 +12,7 @@ class ET_Builder_Module_Fullwidth_PostContent extends ET_Builder_Module_Type_Pos
 		$this->help_videos = array();
 
 		// Use specific selector to target only content inside the app when in VB
-		$this->main_css_element = 'html:not(.et-fb-top-html) %%order_class%%';
+		$this->main_css_element = '%%order_class%%';
 	}
 }
 

@@ -7,6 +7,7 @@
 
 return array(
 	'Allow import to override existing assignments' => esc_html__( 'Allow import to override existing assignments', 'et_builder' ),
+	'Apply Global Defaults To This Website'  => esc_html__( 'Apply Global Defaults To This Website', 'et_builder' ),
 	'Download backup before importing'       => esc_html__( 'Download backup before importing', 'et_builder' ),
 	'Export'                                 => esc_html__( 'Export', 'et_builder' ),
 	'Export All Templates'                   => esc_html__( 'Export All Templates', 'et_builder' ),

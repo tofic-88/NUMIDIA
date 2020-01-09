@@ -6,6 +6,7 @@
  */
 
 return array(
+	'%1$s Copy'                    => esc_html__( '%1$s Copy', 'et_builder' ),
 	'All Changes Saved'            => esc_html__( 'All Changes Saved', 'et_builder' ),
 	'Body'                         => esc_html__( 'Body', 'et_builder' ),
 	'Cancel'                       => esc_html__( 'Cancel', 'et_builder' ),

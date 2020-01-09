@@ -32,6 +32,7 @@ require_once ET_BUILDER_DIR . 'core.php';
 require_once ET_BUILDER_DIR . 'conditions.php';
 require_once ET_BUILDER_DIR . 'post/PostStack.php';
 require_once ET_BUILDER_DIR . 'feature/ClassicEditor.php';
+require_once ET_BUILDER_DIR . 'feature/AjaxCache.php';
 require_once ET_BUILDER_DIR . 'feature/post-content.php';
 require_once ET_BUILDER_DIR . 'feature/dynamic-content.php';
 require_once ET_BUILDER_DIR . 'feature/search-posts.php';
@@ -101,6 +102,15 @@ if ( wp_doing_ajax() && ! is_customize_preview() ) {
 		),
 	);
 
+	// AJAX requests that use PHP modules cache for performance reasons.
+	$builder_use_cache_actions = array(
+		'heartbeat',
+		'et_builder_retrieve_custom_defaults_history',
+		'et_fb_get_saved_templates',
+		'et_fb_ajax_save',
+		'et_fb_ajax_drop_autosave',
+	);
+
 	// Added built-in third party plugins support
 	// Easy Digital Downloads
 	if ( class_exists( 'Easy_Digital_Downloads') ) {
@@ -149,10 +159,11 @@ if ( wp_doing_ajax() && ! is_customize_preview() ) {
 
 	define( 'ET_BUILDER_LOAD_ON_AJAX', $load_builder_on_ajax );
 
+	$action             = et_()->array_get( $_POST, 'action', false );
 	$force_builder_load = isset( $_POST['et_load_builder_modules'] ) && '1' === $_POST['et_load_builder_modules'];
-	$force_memory_limit = isset( $_POST['action'] ) && 'et_fb_retrieve_builder_data' === $_POST['action'];
+	$force_memory_limit = 'et_fb_retrieve_builder_data' === $action;
 
-	if ( isset( $_REQUEST['action'] ) && 'heartbeat' === $_REQUEST['action'] ) {
+	if ( 'heartbeat' === $action ) {
 		// if this is the heartbeat, and if its not packing our heartbeat data, then return
 		if ( !isset( $_REQUEST['data'] ) || !isset( $_REQUEST['data']['et'] ) ) {
 			return;
@@ -163,6 +174,10 @@ if ( wp_doing_ajax() && ! is_customize_preview() ) {
 
 	if ( $force_memory_limit || et_should_memory_limit_increase() ) {
 		et_increase_memory_limit();
+	}
+
+	if ( $action && in_array( $action, $builder_use_cache_actions ) ) {
+		add_filter( 'et_builder_ajax_use_cache', '__return_true' );
 	}
 	// phpcs:enable
 }

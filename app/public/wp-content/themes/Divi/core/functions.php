@@ -1482,3 +1482,153 @@ function et_core_get_et_account() {
 		'status'      => get_site_option( 'et_account_status', 'not_active' ),
 	);
 }
+
+/**
+ * Get all meta saved by the builder for a given post.
+ *
+ * @since 4.0.10
+ *
+ * @param integer $post_id
+ *
+ * @return array
+ */
+function et_core_get_post_builder_meta( $post_id ) {
+	$raw_meta = get_post_meta( $post_id );
+	$meta     = array();
+
+	foreach ( $raw_meta as $key => $values ) {
+		if ( strpos( $key, '_et_pb_' ) !== 0 && strpos( $key, '_et_builder_' ) !== 0 ) {
+			continue;
+		}
+
+		if ( strpos( $key, '_et_pb_ab_' ) === 0 ) {
+			// Do not copy A/B meta as it is post-specific.
+			continue;
+		}
+
+		foreach ( $values as $value ) {
+			$meta[] = array(
+				'key'   => $key,
+				'value' => $value,
+			);
+		}
+	}
+
+	return $meta;
+}
+
+if ( ! function_exists( 'et_core_parse_google_fonts_json' ) ) :
+	/**
+	 * Parse google fonts json to array.
+	 *
+	 * @since 4.0.10
+	 *
+	 * @param string $json Google fonts json file content.
+	 *
+	 * @return array Associative array list of google fonts.
+	 */
+	function et_core_parse_google_fonts_json( $fonts_json ) {
+		if ( ! $fonts_json || ! is_string( $fonts_json ) ) {
+			return array();
+		}
+
+		$fonts_json_decoded = json_decode( $fonts_json, true );
+
+		if ( ! $fonts_json_decoded || empty( $fonts_json_decoded['items'] ) ) {
+			return array();
+		}
+
+		$fonts = array();
+
+		foreach ( $fonts_json_decoded['items'] as $font_item ) {
+			if ( ! isset( $font_item['family'], $font_item['variants'], $font_item['subsets'], $font_item['category'] ) ) {
+				continue;
+			}
+
+			$fonts[ sanitize_text_field( $font_item['family'] ) ] = array(
+				'styles'        => sanitize_text_field( implode( ',', $font_item['variants'] ) ),
+				'character_set' => sanitize_text_field( implode( ',', $font_item['subsets'] ) ),
+				'type'          => sanitize_text_field( $font_item['category'] ),
+			);
+		}
+
+		ksort( $fonts );
+
+		return $fonts;
+	}
+endif;
+
+if ( ! function_exists( 'et_core_get_saved_google_fonts' ) ) :
+	/**
+	 * Get saved google fonts list.
+	 *
+	 * @since 4.0.10
+	 *
+	 * @return array Associative array list of google fonts.
+	 */
+	function et_core_get_saved_google_fonts() {
+		static $saved_google_fonts;
+
+		if ( ! is_null( $saved_google_fonts ) ) {
+			return $saved_google_fonts;
+		}
+
+		$json_file = ET_CORE_PATH . 'json-data/google-fonts.json';
+
+		if ( ! et_()->WPFS()->is_readable( $json_file ) ) {
+			return array();
+		}
+
+		$saved_google_fonts = et_core_parse_google_fonts_json( et_()->WPFS()->get_contents( $json_file ) );
+
+		return $saved_google_fonts;
+	}
+endif;
+
+if ( ! function_exists( 'et_core_get_websafe_fonts' ) ) :
+	/**
+	 * Get websafe fonts list.
+	 *
+	 * @since 4.0.10
+	 *
+	 * @return array Associative array list of websafe fonts.
+	 */
+	function et_core_get_websafe_fonts() {
+		$websafe_fonts = array(
+			'Georgia' => array(
+				'styles'        => '300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
+				'character_set' => 'cyrillic,greek,latin',
+				'type'          => 'serif',
+			),
+			'Times New Roman' => array(
+				'styles'        => '300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
+				'character_set' => 'arabic,cyrillic,greek,hebrew,latin',
+				'type'          => 'serif',
+			),
+			'Arial' => array(
+				'styles'        => '300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
+				'character_set' => 'arabic,cyrillic,greek,hebrew,latin',
+				'type'          => 'sans-serif',
+			),
+			'Trebuchet' => array(
+				'styles'         => '300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
+				'character_set'  => 'cyrillic,latin',
+				'type'           => 'sans-serif',
+				'add_ms_version' => true,
+			),
+			'Verdana' => array(
+				'styles'        => '300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
+				'character_set' => 'cyrillic,latin',
+				'type'          => 'sans-serif',
+			),
+		);
+	
+		foreach ( array_keys( $websafe_fonts ) as $font_name ) {
+			$websafe_fonts[ $font_name ]['standard'] = true;
+		}
+	
+		ksort( $websafe_fonts );
+	
+		return apply_filters( 'et_websafe_fonts', $websafe_fonts );
+	}
+endif;

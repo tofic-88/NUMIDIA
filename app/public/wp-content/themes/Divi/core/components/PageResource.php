@@ -919,7 +919,7 @@ class ET_Core_PageResource {
 
 		self::startup();
 
-		return self::$wpfs;
+		return self::$wpfs = et_core_cache_dir()->wpfs;
 	}
 
 	protected function _initialize_resource() {

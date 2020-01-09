@@ -1,0 +1,9 @@
+[09-Jan-2020 04:18:36 UTC] PHP Fatal error:  Uncaught Error: Class 'ET_Core_Cache_File' not found in C:\Users\15142\Local Sites\numidia-web\app\public\wp-content\themes\Divi\includes\builder\core.php:5873
+Stack trace:
+#0 C:\Users\15142\Local Sites\numidia-web\app\public\wp-content\themes\Divi\includes\builder\functions.php(3767): et_fb_delete_builder_assets()
+#1 C:\Users\15142\Local Sites\numidia-web\app\public\wp-includes\class-wp-hook.php(286): et_builder_theme_or_plugin_updated_cb()
+#2 C:\Users\15142\Local Sites\numidia-web\app\public\wp-includes\class-wp-hook.php(312): WP_Hook->apply_filters(NULL, Array)
+#3 C:\Users\15142\Local Sites\numidia-web\app\public\wp-includes\plugin.php(478): WP_Hook->do_action(Array)
+#4 C:\Users\15142\Local Sites\numidia-web\app\public\wp-admin\includes\class-theme-upgrader.php(428): do_action('upgrader_proces...', Object(Theme_Upgrader), Array)
+#5 C:\Users\15142\Local Sites\numidia-web\app\public\wp-admin\includes\ajax-actions.php(4141): Theme_Upgrader->bulk_upgrade(Array)
+#6 C:\Users\15142\Local Sites\numidia-web\app\pub in C:\Users\15142\Local Sites\numidia-web\app\public\wp-content\themes\Divi\includes\builder\core.php on line 5873

@@ -2176,7 +2176,6 @@ function et_fb_get_nonces() {
 		'resolvePostContent'              => wp_create_nonce( 'et_fb_resolve_post_content' ),
 		'searchProducts'                  => wp_create_nonce( 'et_builder_search_products' ),
 		'searchPosts'                     => wp_create_nonce( 'et_builder_search_posts' ),
-		'getPostTypes'                    => wp_create_nonce( 'et_fb_get_post_types' ),
 		'getPostsList'                    => wp_create_nonce( 'et_fb_get_posts_list' ),
 		'sendErrorReport'                 => wp_create_nonce( 'et_fb_send_error_report' ),
 		'saveCustomDefaultsHistory'       => wp_create_nonce( 'et_builder_save_custom_defaults_history' ),
@@ -4245,6 +4244,8 @@ function et_builder_get_fonts( $settings = array() ) {
 		? array_merge( et_builder_get_websafe_fonts(), et_builder_get_google_fonts() )
 		: array_merge( et_builder_get_google_fonts(), et_builder_get_websafe_fonts() );
 
+	ksort( $fonts );
+
 	return $fonts;
 }
 endif;
@@ -4271,46 +4272,7 @@ endif;
 
 if ( ! function_exists( 'et_builder_get_websafe_fonts' ) ) :
 function et_builder_get_websafe_fonts() {
-	$websafe_fonts = array(
-		'Georgia' => array(
-			'styles' 		=> '300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
-			'character_set' => 'cyrillic,greek,latin',
-			'type'			=> 'serif',
-		),
-		'Times New Roman' => array(
-			'styles' 		=> '300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
-			'character_set' => 'arabic,cyrillic,greek,hebrew,latin',
-			'type'			=> 'serif',
-		),
-		'Arial' => array(
-			'styles' 		=> '300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
-			'character_set' => 'arabic,cyrillic,greek,hebrew,latin',
-			'type'			=> 'sans-serif',
-		),
-		'Trebuchet' => array(
-			'styles' 		=> '300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
-			'character_set' => 'cyrillic,latin',
-			'type'			=> 'sans-serif',
-			'add_ms_version'=> true,
-		),
-		'Verdana' => array(
-			'styles' 		=> '300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
-			'character_set' => 'cyrillic,latin',
-			'type'			=> 'sans-serif',
-		),
-	);
-
-	$_websafe_fonts = array();
-
-	foreach ( $websafe_fonts as $font_name => $settings ) {
-		$settings['standard'] = true;
-
-		$_websafe_fonts[ $font_name ] = $settings;
-	}
-
-	$websafe_fonts = $_websafe_fonts;
-
-	return apply_filters( 'et_websafe_fonts', $websafe_fonts );
+	return et_core_get_websafe_fonts();
 }
 endif;
 
@@ -4375,21 +4337,7 @@ function et_builder_google_fonts_sync() {
 	$google_fonts_api_url = sprintf( 'https://www.googleapis.com/webfonts/v1/webfonts?key=%1$s', $google_api_key );
 	$google_fonts_response = wp_remote_get( esc_url_raw( $google_fonts_api_url ) );
 
-	$all_google_fonts = is_array( $google_fonts_response ) ? json_decode( wp_remote_retrieve_body( $google_fonts_response ), true ) : array();
-
-	if ( empty( $all_google_fonts ) || empty( $all_google_fonts['items'] ) ) {
-		return;
-	}
-
-	$google_fonts = array();
-
-	foreach ( $all_google_fonts['items'] as $font_data ) {
-		$google_fonts[ sanitize_text_field( $font_data['family'] ) ] = array(
-			'styles'        => sanitize_text_field( implode( ',', $font_data['variants'] ) ),
-			'character_set' => sanitize_text_field( implode( ',', $font_data['subsets'] ) ),
-			'type'          => sanitize_text_field( $font_data['category'] ),
-		);
-	}
+	$google_fonts = is_array( $google_fonts_response ) ? et_core_parse_google_fonts_json( wp_remote_retrieve_body( $google_fonts_response ) ) : array();
 
 	if ( ! empty( $google_fonts ) ) {
 		// save google fonts
@@ -4419,10 +4367,8 @@ function et_builder_get_google_fonts() {
 		return apply_filters( 'et_builder_google_fonts', $google_fonts_cache );
 	}
 
-	require_once( ET_BUILDER_DIR . 'google-fonts-data.php' );
-
 	// use hardcoded google fonts as fallback if no cache exists
-	return apply_filters( 'et_builder_google_fonts', et_pb_get_saved_google_fonts() );
+	return apply_filters( 'et_builder_google_fonts', et_core_get_saved_google_fonts() );
 }
 endif;
 
@@ -4514,17 +4460,6 @@ function et_fb_get_saved_templates() {
 	die( et_core_esc_previously( $json_templates ) );
 }
 add_action( 'wp_ajax_et_fb_get_saved_templates', 'et_fb_get_saved_templates' );
-
-/*
- * Retrieves post types that builder enabled
- *
- */
-function et_fb_get_post_types() {
-	et_core_security_check( 'edit_posts', 'et_fb_get_post_types' );
-
-	wp_send_json_success( et_get_registered_post_type_options() );
-}
-add_action( 'wp_ajax_et_fb_get_post_types', 'et_fb_get_post_types' );
 
 /*
  * Retrieves posts list that builder enabled
@@ -5872,6 +5807,13 @@ function et_fb_delete_builder_assets() {
 	foreach ( $image_cache_keys as $image_cache_key ) {
 		@unlink( ET_Core_Cache_File::get_cache_file_name( $image_cache_key ) );
 	}
+
+	/**
+	 * Clear AJAX cache
+	 *
+	 * @since 4.0.10
+	 */
+	do_action( 'et_builder_ajax_cache_clear' );
 }
 endif;
 

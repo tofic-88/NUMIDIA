@@ -56,6 +56,8 @@ class ET_Builder_Plugin_Compat_ToolsetViews extends ET_Builder_Plugin_Compat_Bas
 			// Content templates not using Divi break the BFB, disable them.
 			add_filter( 'get_post_metadata', array( $this, 'disable_views' ), 10, 4 );
 		}
+
+		add_filter( 'et_builder_render_layout', array( $this, 'transform_shortcodes' ), 4 );
 	}
 
 	/**
@@ -85,6 +87,24 @@ class ET_Builder_Plugin_Compat_ToolsetViews extends ET_Builder_Plugin_Compat_Bas
 			return false;
 		}
 		return $value;
+	}
+
+	/**
+	 * Transform {!{ ... }!} shortcodes to [] ones.
+	 *
+	 * @since 4.0.10
+	 *
+	 * @param string $content
+	 *
+	 * @return string
+	 */
+	public function transform_shortcodes( $content ) {
+		/**
+		 * @see Toolset_Shortcode_Transformer::replace_shortcode_placeholders_with_brackets()
+		 *
+		 * @param string $content
+		 */
+		return apply_filters( 'toolset_transform_shortcode_format', $content );
 	}
 }
 

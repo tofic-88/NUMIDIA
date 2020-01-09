@@ -46,6 +46,7 @@ function et_theme_builder_filter_resolve_default_dynamic_content( $content, $nam
 		),
 		'post_author_bio' => __( 'Your dynamic author bio will display here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus auctor urna eleifend diam eleifend sollicitudin a fringilla turpis. Curabitur lectus enim.', 'et_builder' ),
 		'post_featured_image' => ET_BUILDER_PLACEHOLDER_LANDSCAPE_IMAGE_DATA,
+		'term_description' => __( 'Your dynamic category description will display here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus auctor urna eleifend diam eleifend sollicitudin a fringilla turpis. Curabitur lectus enim.', 'et_builder' ),
 		'site_logo' => 'https://www.elegantthemes.com/img/divi.png',
 	);
 
@@ -166,7 +167,15 @@ function et_theme_builder_filter_resolve_default_dynamic_content( $content, $nam
 			$content = esc_html( $placeholders[ $name ] );
 			break;
 
+		case 'term_description':
+			$content = esc_html( $placeholders[ $name ] );
+			break;
+
 		case 'post_link_url':
+			$content = '#';
+			break;
+
+		case 'post_author_url':
 			$content = '#';
 			break;
 

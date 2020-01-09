@@ -39,6 +39,8 @@ require_once ET_THEME_BUILDER_DIR . 'dynamic-content.php';
 // Conditional Includes.
 if ( et_is_woocommerce_plugin_active() ) {
 	require_once ET_THEME_BUILDER_DIR . 'woocommerce.php';
+	require_once ET_THEME_BUILDER_DIR . 'WoocommerceProductVariablePlaceholder.php';
+	require_once ET_THEME_BUILDER_DIR . 'WoocommerceProductVariablePlaceholderDataStoreCPT.php';
 }
 
 /**
@@ -770,6 +772,21 @@ function et_theme_builder_get_template_settings_options_for_archive_pages() {
 	$group['settings'][] = array(
 		'id'       => implode(
 			ET_THEME_BUILDER_SETTING_SEPARATOR,
+			array( 'archive', 'user', 'role', '' )
+		),
+		'label'    => et_core_intentionally_unescaped( __( 'Specific Author Page By Role', 'et_builder' ), 'react_jsx' ),
+		'priority' => 53,
+		'validate' => 'et_theme_builder_template_setting_validate_archive_user_role',
+		'options'  => array(
+			'label' => et_core_intentionally_unescaped( __( 'Roles', 'et_builder' ), 'react_jsx' ),
+			'type'  => 'user_role',
+			'value' => '',
+		),
+	);
+
+	$group['settings'][] = array(
+		'id'       => implode(
+			ET_THEME_BUILDER_SETTING_SEPARATOR,
 			array( 'archive', 'date', 'all' )
 		),
 		'label'    => et_core_intentionally_unescaped( __( 'All Date Pages', 'et_builder' ), 'react_jsx' ),
@@ -1019,6 +1036,25 @@ function et_theme_builder_get_template_setting_child_options( $parent, $include 
 					'parent'    => $parent['id'],
 					'label'     => et_core_intentionally_unescaped( $user->display_name, 'react_jsx' ),
 					'title'     => et_core_intentionally_unescaped( $user->user_login, 'react_jsx' ),
+					'priority'  => $parent['priority'],
+					'validate'  => $parent['validate'],
+				);
+			}
+
+			return $values;
+			break;
+
+		case 'user_role':
+			$roles  = wp_roles()->get_names();
+			$values = array();
+
+			foreach ( $roles as $role => $label ) {
+				$id            = $parent['id'] . $role;
+				$values[ $id ] = array(
+					'id'        => $id,
+					'parent'    => $parent['id'],
+					'label'     => et_core_intentionally_unescaped( $label, 'react_jsx' ),
+					'title'     => et_core_intentionally_unescaped( $role, 'react_jsx' ),
 					'priority'  => $parent['priority'],
 					'validate'  => $parent['validate'],
 				);

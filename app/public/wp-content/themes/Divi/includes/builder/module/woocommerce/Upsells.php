@@ -430,6 +430,20 @@ class ET_Builder_Module_Woocommerce_Upsells extends ET_Builder_Module {
 	public static function get_upsells( $args = array(), $conditional_tags = array(), $current_page = array() ) {
 		self::$static_props = $args;
 
+		// Force set product's class to ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder
+		// in TB so related product can outputs visible content based on pre-filled value in TB
+		if ( 'true' === et_()->array_get( $conditional_tags, 'is_tb', false ) ) {
+			// Set upsells id; adjust it with module's arguments. This is specifically needed if
+			// the module fetched the value via computed callback due to some fields no longer uses
+			// default value
+			ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder::set_tb_upsells_ids( array(
+				'limit' => et_()->array_get( $args, 'posts_number', 4 ),
+			) );
+
+			add_filter( 'woocommerce_product_class', 'et_theme_builder_wc_product_class' );
+		}
+
+
 		add_filter(
 			'woocommerce_upsell_display_args',
 			array(

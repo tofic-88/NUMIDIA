@@ -243,6 +243,7 @@ abstract class ET_Builder_Module_Type_WithSpamProtection extends ET_Builder_Modu
 			'label'           => esc_html__( 'Minimum Score', 'et_builder' ),
 			'type'            => 'range',
 			'option_category' => 'configuration',
+			'validate_unit'    => false,
 			'range_settings'  => array(
 				'min'  => '0',
 				'max'  => '1',

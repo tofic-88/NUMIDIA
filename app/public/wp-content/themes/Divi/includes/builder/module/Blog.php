@@ -72,10 +72,12 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 						'tabbed_subtoggles' => true,
 						'bb_icons_support'  => true,
 						'css'               => array(
-							'link'  => "{$this->main_css_element} .post-content a, %%order_class%%.et_pb_bg_layout_light .et_pb_post .post-content a, %%order_class%%.et_pb_bg_layout_dark .et_pb_post .post-content a",
-							'ul'    => "{$this->main_css_element} .post-content ul li, %%order_class%%.et_pb_bg_layout_light .et_pb_post .post-content ul li, %%order_class%%.et_pb_bg_layout_dark .et_pb_post .post-content ul li",
-							'ol'    => "{$this->main_css_element} .post-content ol li, %%order_class%%.et_pb_bg_layout_light .et_pb_post .post-content ol li, %%order_class%%.et_pb_bg_layout_dark .et_pb_post .post-content ol li",
-							'quote' => "{$this->main_css_element} .post-content blockquote, %%order_class%%.et_pb_bg_layout_light .et_pb_post .post-content blockquote, %%order_class%%.et_pb_bg_layout_dark .et_pb_post .post-content blockquote",
+							'link'           => "{$this->main_css_element} .post-content a, %%order_class%%.et_pb_bg_layout_light .et_pb_post .post-content a, %%order_class%%.et_pb_bg_layout_dark .et_pb_post .post-content a",
+							'ul'             => "{$this->main_css_element} .post-content ul li, %%order_class%%.et_pb_bg_layout_light .et_pb_post .post-content ul li, %%order_class%%.et_pb_bg_layout_dark .et_pb_post .post-content ul li",
+							'ul_item_indent' => "{$this->main_css_element} .post-content ul, %%order_class%%.et_pb_bg_layout_light .et_pb_post .post-content ul, %%order_class%%.et_pb_bg_layout_dark .et_pb_post .post-content ul",
+							'ol'             => "{$this->main_css_element} .post-content ol li, %%order_class%%.et_pb_bg_layout_light .et_pb_post .post-content ol li, %%order_class%%.et_pb_bg_layout_dark .et_pb_post .post-content ol li",
+							'ol_item_indent' => "{$this->main_css_element} .post-content ol, %%order_class%%.et_pb_bg_layout_light .et_pb_post .post-content ol, %%order_class%%.et_pb_bg_layout_dark .et_pb_post .post-content ol",
+							'quote'          => "{$this->main_css_element} .post-content blockquote, %%order_class%%.et_pb_bg_layout_light .et_pb_post .post-content blockquote, %%order_class%%.et_pb_bg_layout_dark .et_pb_post .post-content blockquote",
 						),
 					),
 				),
@@ -1092,7 +1094,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		$use_current_loop = 'on' === ( isset( $this->props['use_current_loop'] ) ? $this->props['use_current_loop'] : 'off' );
 
 		if ( ! $use_current_loop ) {
-		    add_filter( 'get_pagenum_link', array( 'ET_Builder_Module_Blog', 'filter_pagination_url' ) );
+			add_filter( 'get_pagenum_link', array( 'ET_Builder_Module_Blog', 'filter_pagination_url' ) );
 		}
 
 		if ( function_exists( 'wp_pagenavi' ) ) {
@@ -1106,7 +1108,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		}
 
 		if ( ! $use_current_loop ) {
-		    remove_filter( 'get_pagenum_link', array( 'ET_Builder_Module_Blog', 'filter_pagination_url' ) );
+			remove_filter( 'get_pagenum_link', array( 'ET_Builder_Module_Blog', 'filter_pagination_url' ) );
 		}
 
 		if ( ! $echo ) {
@@ -1132,7 +1134,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 	}
 
 	function render( $attrs, $content = null, $render_slug ) {
-		global $post, $paged, $wp_query, $wp_filter, $__et_blog_module_paged;
+		global $post, $paged, $wp_query, $wp_the_query, $wp_filter, $__et_blog_module_paged;
 
 		if ( self::$rendering ) {
 			// We are trying to render a Blog module while a Blog module is already being rendered
@@ -1141,6 +1143,9 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 			// which renders a Blog module is not a sensible use-case.
 			return '';
 		}
+
+		// Keep a reference to the real main query to restore from later.
+		$main_query = $wp_the_query;
 
 		// Stored current global post as variable so global $post variable can be restored
 		// to its original state when et_pb_blog shortcode ends to avoid incorrect global $post
@@ -1360,10 +1365,12 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 			$show_no_results_template = false;
 		} else {
 			// Only allow certain args when `Posts For Current Page` is set.
-			global $wp_query;
 			$original = $wp_query->query_vars;
 			$custom   = array_intersect_key( $args, array_flip( array( 'posts_per_page', 'offset' ) ) );
-			query_posts( array_merge( $original, $custom ) );
+
+			// Trick WP into reporting this query as the main query so third party filters
+			// that check for is_main_query() are applied.
+			$wp_the_query = $wp_query = new WP_Query( array_merge( $original, $custom ) );
 		}
 
 		// Manually set the max_num_pages to make the `next_posts_link` work
@@ -1547,6 +1554,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 			echo self::get_no_results_template( et_core_intentionally_unescaped( $processed_header_level, 'fixed_string' ) );
 		}
 
+		$wp_the_query = $wp_query = $main_query;
 		wp_reset_query();
 		ET_Post_Stack::reset();
 

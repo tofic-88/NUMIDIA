@@ -31,11 +31,11 @@ class ET_Builder_Module_Woocommerce_Title extends ET_Builder_Module {
 			),
 			'advanced' => array(
 				'toggles' => array(
-					'text'  => array(
+					'header' => array(
 						'title'    => esc_html__( 'Title Text', 'et_builder' ),
 						'priority' => 49,
 					),
-					'width' => array(
+					'width'  => array(
 						'title'    => esc_html__( 'Sizing', 'et_builder' ),
 						'priority' => 65,
 					),
@@ -54,7 +54,7 @@ class ET_Builder_Module_Woocommerce_Title extends ET_Builder_Module {
 						'default' => 'h1',
 					),
 					'tab_slug'     => 'advanced',
-					'toggle_slug'  => 'text',
+					'toggle_slug'  => 'header',
 				),
 			),
 			'background'     => array(
@@ -79,6 +79,7 @@ class ET_Builder_Module_Woocommerce_Title extends ET_Builder_Module {
 						'hover'            => 'tabs',
 					),
 				),
+				'toggle_slug'           => 'header',
 			),
 			'text_shadow'    => array(
 				// Don't add text-shadow fields since they already are via font-options.

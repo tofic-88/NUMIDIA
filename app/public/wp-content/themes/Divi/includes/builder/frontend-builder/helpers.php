@@ -367,6 +367,7 @@ function et_fb_get_dynamic_backend_helpers() {
 		),
 		'customDefaults'                  => ET_Builder_Element::get_custom_defaults(),
 		'module_cache_filename_id'        => ET_Builder_Element::get_cache_filename_id( $post_type ),
+		'registeredPostTypeOptions'       => et_get_registered_post_type_options(),
 	);
 
 	$helpers['css'] = array(
@@ -390,13 +391,17 @@ function et_fb_get_dynamic_backend_helpers() {
 // This function is used to add static helpers whose content changes rarely
 // eg: google fonts, module defaults and so on.
 function et_fb_get_static_backend_helpers($post_type) {
-
-	$use_google_fonts = et_core_use_google_fonts();
-	$websafe_fonts = et_builder_get_websafe_fonts();
-	$default_fonts_set = array_merge( array( 'Default' => array() ), $websafe_fonts );
-	$google_fonts = $use_google_fonts ? array_merge( $default_fonts_set, et_builder_get_google_fonts() ) : $default_fonts_set;
 	$custom_user_fonts = et_builder_get_custom_fonts();
-	$current_url  = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+	$use_google_fonts  = et_core_use_google_fonts();
+	$websafe_fonts     = et_builder_get_websafe_fonts();
+	$google_fonts      = $websafe_fonts;
+
+	if ( $use_google_fonts ) {
+		$google_fonts = array_merge( $websafe_fonts, et_builder_get_google_fonts() ) ;
+		ksort( $google_fonts );
+	}
+
+	$google_fonts = array_merge( array( 'Default' => array() ), $google_fonts );
 
 	/**
 	 * Filters modules list.

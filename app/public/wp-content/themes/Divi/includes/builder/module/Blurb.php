@@ -374,6 +374,20 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 				'default_on_front'  => 'top',
 				'mobile_options'    => true,
 			),
+			'icon_alignment' => array(
+				'label'           => esc_html__( 'Image/Icon Alignment', 'et_builder' ),
+				'description'     => esc_html__( 'Align image/icon to the left, right or center.', 'et_builder' ),
+				'type'            => 'align',
+				'option_category' => 'layout',
+				'options'         => et_builder_get_text_orientation_options( array( 'justified' ) ),
+				'tab_slug'        => 'advanced',
+				'toggle_slug'     => 'icon_settings',
+				'default'         => 'center',
+				'mobile_options'  => true,
+				'show_if'         => array(
+					'icon_placement' => 'top',
+				),
+			),
 			'content' => array(
 				'label'             => esc_html__( 'Body', 'et_builder' ),
 				'type'              => 'tiny_mce',
@@ -539,6 +553,8 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 		$icon_placement_values           = et_pb_responsive_options()->get_property_values( $this->props, 'icon_placement' );
 		$icon_placement_tablet           = isset( $icon_placement_values['tablet'] ) ? $icon_placement_values['tablet'] : '';
 		$icon_placement_phone            = isset( $icon_placement_values['phone'] ) ? $icon_placement_values['phone'] : '';
+		$is_icon_placement_responsive    = et_pb_responsive_options()->is_responsive_enabled( $this->props, 'icon_placement' );
+		$is_icon_placement_top           = ! $is_icon_placement_responsive ? 'top' === $icon_placement : in_array( 'top', $icon_placement_values );
 
 		$animation                       = $this->props['animation'];
 		$animation_values                = et_pb_responsive_options()->get_property_values( $this->props, 'animation' );
@@ -549,6 +565,87 @@ class ET_Builder_Module_Blurb extends ET_Builder_Module {
 		$is_image_svg   = isset( $image_pathinfo['extension'] ) ? 'svg' === $image_pathinfo['extension'] : false;
 
 		$icon_selector = '%%order_class%% .et-pb-icon';
+
+		// Icon/image alignment is only rendered if icon/image placement is set to `top`. Note: due
+		// to responsive option, icon placement can be set to `left` on desktop but `top` on tablet;
+		// this case is considered truthy for $is_icon_placement_top
+		if ( $is_icon_placement_top ) {
+			$is_icon                    = 'on' === $use_icon;
+			$icon_alignment             = $this->props['icon_alignment'];
+			$icon_alignment_values      = et_pb_responsive_options()->get_property_values( $this->props, 'icon_alignment' );
+			$icon_alignment_last_edited = $this->props['icon_alignment_last_edited'];
+			$icon_alignment_margins     = array(
+				'left'   => 'auto auto auto 0',
+				'center' => 'auto',
+				'right'  => 'auto 0 auto auto',
+			);
+
+			// Icon and image use different method of aligning and DOM structure. However, if the image's
+			// width is less than the wrapper width, it'll need icon's text-align style to align it
+			// Hence icon's alignment styling is always being outputted, while image is only when needed
+			$icon_alignment_selector  = '%%order_class%% .et_pb_blurb_content';
+			$image_alignment_selector = '%%order_class%%.et_pb_blurb .et_pb_image_wrap';
+
+			if ( et_pb_get_responsive_status( $icon_alignment_last_edited ) && '' !== implode( $icon_alignment_values, '' ) ) {
+				// Icon and less than wrapper width image alignment style
+				et_pb_responsive_options()->generate_responsive_css(
+					$icon_alignment_values,
+					$icon_alignment_selector,
+					'text-align',
+					$render_slug,
+					'',
+					'align'
+				);
+
+				// Image alignment style
+				if ( ! $is_icon ) {
+					$image_alignment_values = array();
+
+					foreach( $icon_alignment_values as $breakpoint => $alignment ) {
+						$image_alignment_values[ $breakpoint ] = et_()->array_get(
+							$icon_alignment_margins,
+							$alignment,
+							''
+						);
+					}
+
+					// Image alignment style
+					et_pb_responsive_options()->generate_responsive_css(
+						$image_alignment_values,
+						$image_alignment_selector,
+						'margin',
+						$render_slug,
+						'',
+						'align'
+					);
+				}
+			} else {
+				// Let default css handle the alignment if it isn't left or right
+				if ( in_array( $icon_alignment, array( 'left', 'right' ) ) ) {
+					$icon_alignment_prop_value = $is_icon ? $icon_alignment : et_()->array_get( $icon_alignment_margins, $icon_alignment, '' );
+
+					// Icon and less than wrapper width image alignment style
+					ET_Builder_Element::set_style( $render_slug, array(
+						'selector'    => $icon_alignment_selector,
+						'declaration' => sprintf(
+							'text-align: %1$s;',
+							esc_html( $icon_alignment )
+						),
+					) );
+
+					// Image alignment style
+					if ( ! $is_icon ) {
+						ET_Builder_Element::set_style( $render_slug, array(
+							'selector'    => $image_alignment_selector,
+							'declaration' => sprintf(
+								'margin: %1$s;',
+								esc_html( et_()->array_get( $icon_alignment_margins, $icon_alignment, '' ) )
+							),
+						) );
+					}
+				}
+			}
+		}
 
 		if ( 'off' !== $use_icon_font_size ) {
 			$font_size_responsive_active = et_pb_get_responsive_status( $icon_font_size_last_edited );

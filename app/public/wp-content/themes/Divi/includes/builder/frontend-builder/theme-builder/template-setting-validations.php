@@ -213,6 +213,36 @@ function et_theme_builder_template_setting_validate_archive_user_id( $type, $sub
 }
 
 /**
+ * Validate archive:user:role:<role>.
+ *
+ * @since 4.0.10
+ *
+ * @param string $type
+ * @param string $subtype
+ * @param integer $id
+ * @param string[] $setting
+ *
+ * @return bool
+ */
+function et_theme_builder_template_setting_validate_archive_user_role( $type, $subtype, $id, $setting ) {
+	$user = get_userdata( $id );
+
+	if ( ! $user ) {
+		return false;
+	}
+
+	if ( 'administrator' === $setting[3] && is_super_admin( $user->ID ) ) {
+		// Superadmins may:
+		// - have a low-level role assigned in the current site
+		// - not be added to the site at all
+		// in either case they are treated as administrators so we have to handle this edge case.
+		return true;
+	}
+
+	return ET_Theme_Builder_Request::TYPE_AUTHOR === $type && in_array( $setting[3], $user->roles, true );
+}
+
+/**
  * Validate archive:date:all.
  *
  * @since 4.0

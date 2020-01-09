@@ -67,6 +67,8 @@ class ET_Builder_Custom_Defaults_History {
 				et_fb_delete_builder_assets();
 			}
 
+			ET_Builder_Ajax_Cache::instance()->unset_( 'et_builder_custom_defaults_history' );
+
 			wp_send_json_success();
 		} else {
 			et_core_die( esc_html__( 'Global History data is corrupt.', 'et_builder' ) );
@@ -86,6 +88,8 @@ class ET_Builder_Custom_Defaults_History {
 		}
 
 		$history = $this->_get_custom_defaults_history();
+
+		ET_Builder_Ajax_Cache::instance()->set( 'et_builder_custom_defaults_history', $history );
 
 		wp_send_json_success( $history );
 	}

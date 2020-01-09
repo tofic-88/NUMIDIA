@@ -397,6 +397,7 @@ class ET_Core_Portability {
 				'context'              => 'et_theme_builder',
 				'templates'            => array(),
 				'layouts'              => array(),
+				'defaults'             => array(),
 				'has_default_template' => false,
 				'has_global_layouts'   => false,
 			);
@@ -456,8 +457,18 @@ class ET_Core_Portability {
 					),
 					$chunk
 				);
+
+				$step_data['data']['post_meta'] = array_merge(
+					et_()->array_get( $step_data, 'data.post_meta', array() ),
+					et_core_get_post_builder_meta( $post_id )
+				);
+
 				$data['layouts'][ $post_id ] = $step_data['data'];
 				$chunks = $step_data['chunks'];
+				break;
+
+			case 'defaults':
+				$data['defaults'] = $step['data'];
 				break;
 		}
 
@@ -557,6 +568,7 @@ class ET_Core_Portability {
 			$import['data']   = $this->replace_images_urls( $result['images'], $import['data'] );
 			$post_type        = self::$_->array_get( $import, 'post_type', 'post' );
 			$post_title       = self::$_->array_get( $import, 'post_title', '' );
+			$post_meta        = self::$_->array_get( $import, 'post_meta', array() );
 			$post_type_object = get_post_type_object( $post_type );
 
 			if ( ! $post_type_object || ! current_user_can( $post_type_object->cap->create_posts ) ) {
@@ -578,6 +590,10 @@ class ET_Core_Portability {
 
 			if ( is_wp_error( $post_id ) ) {
 				return false;
+			}
+
+			foreach ( $post_meta as $entry ) {
+				add_post_meta( $post_id, $entry['key'], $entry['value'] );
 			}
 		}
 
@@ -611,6 +627,22 @@ class ET_Core_Portability {
 
 		switch ( $step['type'] ) {
 			case 'layout':
+				$defaults = et_()->array_get( $step, 'defaults', array() );
+				$layouts  = et_()->array_get( $step['data'], 'data', array() );
+
+				// Apply any defaults to the layouts' shortcodes prior to importing them.
+				if ( ! empty( $defaults ) && ! empty( $layouts ) ) {
+					foreach ( $layouts as $key => $layout ) {
+						$shortcode_object = et_fb_process_shortcode( $layout );
+
+						$this->apply_custom_defaults( $shortcode_object, $defaults );
+
+						$layouts[ $key ] = et_fb_process_to_shortcode( $shortcode_object, array(), '', false );
+					}
+
+					$step['data']['data'] = $layouts;
+				}
+
 				$result = $this->import_layout( $id, $step['data'], $chunk );
 
 				if ( false === $result ) {
@@ -904,11 +936,13 @@ class ET_Core_Portability {
 	/**
 	 * Imports custom defaults
 	 *
+	 * @since 4.0.10 Made public.
+	 *
 	 * @param array $defaults - The array of the modules custom defaults
 	 *
 	 * @return boolean
 	 */
-	protected function import_custom_defaults( $defaults ) {
+	public function import_custom_defaults( $defaults ) {
 		if ( ! is_array( $defaults ) ) {
 			return false;
 		}
@@ -1686,7 +1720,7 @@ class ET_Core_Portability {
 	 * Check if a temporary file is register. Returns temporary file if it exists.
 	 *
 	 * @since 4.0 Made method public.
-     *
+	 *
 	 * @param string $id    Unique id used when the temporary file was created.
 	 * @param string $group Group name in which files are grouped.
 	 *

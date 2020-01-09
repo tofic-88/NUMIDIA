@@ -123,6 +123,7 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 						'main'        => "{$this->main_css_element} ul li",
 						'color'       => "{$this->main_css_element}.et_pb_text ul li",
 						'line_height' => "{$this->main_css_element} ul li",
+						'item_indent' => "{$this->main_css_element} ul",
 					),
 					'line_height' => array(
 						'default' => '1em',
@@ -139,6 +140,7 @@ class ET_Builder_Module_Text extends ET_Builder_Module {
 						'main'        => "{$this->main_css_element} ol li",
 						'color'       => "{$this->main_css_element}.et_pb_text ol li",
 						'line_height' => "{$this->main_css_element} ol li",
+						'item_indent' => "{$this->main_css_element} ol",
 					),
 					'line_height' => array(
 						'default' => '1em',

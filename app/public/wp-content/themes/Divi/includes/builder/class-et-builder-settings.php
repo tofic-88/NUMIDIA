@@ -921,6 +921,10 @@ class ET_Builder_Settings {
 	}
 
 	public static function update_option_cb( $setting, $setting_value, $post_id = 'global' ) {
+		if ( did_action( 'wp_ajax_et_fb_ajax_save' ) ) {
+			return;
+		}
+
 		self::_maybe_clear_cached_static_css_files( $setting, $setting_value );
 	}
 

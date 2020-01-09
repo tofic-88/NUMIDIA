@@ -3,77 +3,32 @@
  * Get placeholders for WooCommerce module in Theme Builder
  *
  * @since 4.0.1
+ * @since 4.0.10 Product placeholders is initialized as TB placeholder product's default props
  *
  * @return array
  */
 function et_theme_builder_wc_placeholders() {
-	global $post;
-
-	static $placeholders = array();
-
-	// If placeholders values have been populated, reuse it
-	if ( ! empty( $placeholders ) ) {
-		return $placeholders;
-	}
-
-	// Get latest uploaded images to library
-	$gallery_images    = get_posts(
-		array(
-			'numberposts' => 4,
-			'post_type'   => 'attachment',
-			'orderby'     => 'menu_order ASC, ID',
-			'order'       => 'DESC',
-		)
-	);
-	$gallery_image_ids = wp_list_pluck( $gallery_images, 'ID' );
-	$image_id          = array_shift( $gallery_image_ids );
-	$gallery_image_ids = array();
-
-	// Get recent products for upsells / related product
-	$recent_products_query = new WC_Product_Query( array(
-		'limit' => 4,
-	) );
-	$recent_product_ids    = array();
-
-	foreach( $recent_products_query->get_products() as $recent_product ) {
-		$recent_product_ids[] = $recent_product->get_id();
-	}
-
-	// Populate placeholders
-	$placeholders = array(
+	return array(
 		'title'              => esc_html( 'Product name', 'et_builder' ),
 		'slug'               => 'product-name',
 		'short_description'  => esc_html( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris bibendum eget dui sed vehicula. Suspendisse potenti. Nam dignissim at elit non lobortis.', 'et_builder' ),
 		'description'        => esc_html( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris bibendum eget dui sed vehicula. Suspendisse potenti. Nam dignissim at elit non lobortis. Cras sagittis dui diam, a finibus nibh euismod vestibulum. Integer sed blandit felis. Maecenas commodo ante in mi ultricies euismod. Morbi condimentum interdum luctus. Mauris iaculis interdum risus in volutpat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent cursus odio eget cursus pharetra. Aliquam lacinia lectus a nibh ullamcorper maximus. Quisque at sapien pulvinar, dictum elit a, bibendum massa. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris non pellentesque urna.', 'et_builder' ),
 		'status'             => 'publish',
 		'comment_status'     => 'open',
-		'reviews_allowed'    => true,
-		'manage_stock'       => true,
-		'stock_status'       => 'instock',
-		'stock_quantity'     => 50,
-		'low_stock_amount'   => 2,
-		'rating_counts'      => array(
-			4 => 2,
-		),
-		'average_rating'     => '4.00',
-		'review_count'       => 2,
-		'image_id'           => $image_id,
-		'gallery_image_ids'  => $gallery_image_ids,
-		'weight'             => 2,
-		'width'              => 2,
-		'height'             => 2,
-		'recent_product_ids' => $recent_product_ids,
-		'attributes'         => array(
-			'id'        => 1,
-			'name'      => 'color',
-			'options'   => 'Black | White | Gray',
-			'position'  => 0,
-			'visible'   => 1,
-			'variation' => 1,
-		),
 	);
+}
 
-	return $placeholders;
+/**
+ * Force set product's class to ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder in TB's woocommerceComponent
+ * rendering. This product classname is specifically filled and will returned TB placeholder data
+ * without retrieving actual value from database
+ *
+ * @since 4.0.10
+ *
+ * @return string
+ */
+function et_theme_builder_wc_product_class() {
+	return 'ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder';
 }
 
 /**
@@ -111,8 +66,9 @@ function et_theme_builder_wc_review_placeholder() {
  * @param array $conditional_tags evaluate conditional tags when current request is AJAX request
  */
 function et_theme_builder_wc_set_global_objects( $conditional_tags = array() ) {
+	$is_tb = et_()->array_get( $conditional_tags, 'is_tb', false );
 	// Check if current request is theme builder (direct page / AJAX request)
-	if ( ! et_builder_tb_enabled() && ! et_()->array_get( $conditional_tags, 'is_tb', false ) ) {
+	if ( ! et_builder_tb_enabled() && ! $is_tb ) {
 		return;
 	}
 
@@ -145,6 +101,17 @@ function et_theme_builder_wc_set_global_objects( $conditional_tags = array() ) {
 	// Get placeholders
 	$placeholders = et_theme_builder_wc_placeholders();
 
+	if ( $is_tb ) {
+		$placeholder_src = wc_placeholder_img_src( 'full' );
+		$placeholder_id  = attachment_url_to_postid( $placeholder_src );
+
+		if ( absint( $placeholder_id ) > 0 ) {
+			$placeholders['gallery_image_ids'] = array( $placeholder_id );
+		}
+	} else {
+		$placeholders['gallery_image_ids'] = array();
+	}
+
 	// $post might be null if current request is computed callback (ie. WC gallery)
 	if ( is_null( $post ) ) {
 		$post = new stdClass();
@@ -159,60 +126,12 @@ function et_theme_builder_wc_set_global_objects( $conditional_tags = array() ) {
 	$post->comment_status = $placeholders['comment_status'];
 
 	// Overwrite global $product
-	$product = new ET_WC_Product_Variable_TB_Placeholder();
+	$product = new ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder();
 
-	// Manually set product props because this has no real value stored in DB
-	$product->set_defaults();
-
-	// Set global product's props
-	$product->set_props(
-		array(
-			'name'              => $placeholders['title'],
-			'slug'              => $placeholders['slug'],
-			'sku'               => $placeholders['slug'],
-			'status'            => $placeholders['status'],
-			'description'       => $placeholders['description'],
-			'short_description' => $placeholders['short_description'],
-
-			// Reviews
-			'reviews_allowed'   => $placeholders['reviews_allowed'],
-
-			// Stock
-			'manage_stock'      => $placeholders['manage_stock'],
-			'stock_status'      => $placeholders['stock_status'],
-			'stock_quantity'    => $placeholders['stock_quantity'],
-			'low_stock_amount'  => $placeholders['low_stock_amount'],
-
-			// Rating
-			'rating_counts'     => $placeholders['rating_counts'],
-			'average_rating'    => $placeholders['average_rating'],
-			'review_count'      => $placeholders['review_count'],
-
-			// Image & Gallery
-			'image_id'          => $placeholders['image_id'],
-			'gallery_image_ids' => $placeholders['gallery_image_ids'],
-
-			// Additional Info
-			'weight'            => $placeholders['weight'],
-			'width'             => $placeholders['width'],
-			'height'            => $placeholders['height'],
-		)
-	);
-
-	// Set recent products as upsell product for TB placeholder
-	$product->set_upsell_ids( $placeholders['recent_product_ids'] );
-
-	// Set attributes, since placeholder uses variable type product
-	$attribute = new WC_Product_Attribute();
-
-	$attribute->set_id( $placeholders['attributes']['id'] );
-	$attribute->set_name( $placeholders['attributes']['name'] );
-	$attribute->set_options( $placeholders['attributes']['options'] );
-	$attribute->set_position( $placeholders['attributes']['position'] );
-	$attribute->set_visible( $placeholders['attributes']['visible'] );
-	$attribute->set_variation( $placeholders['attributes']['variation'] );
-
-	$product->set_attributes( array( $attribute ) );
+	// Set current post ID as product's ID. `ET_Theme_Builder_Woocommerce_Product_Variable_Placeholder`
+	// handles all placeholder related value but product ID need to be manually set to match current
+	// post's ID. This is especially needed when add-ons is used and accessing get_id() method.
+	$product->set_id( $post->ID );
 
 	// Save modified global for later use
 	$tb_wc_post    = $post;
@@ -294,9 +213,8 @@ function et_theme_builder_wc_set_review_metadata( $value, $object_id, $meta_key,
 
 	// Modify rating metadata
 	if ( $is_tb && 'rating' === $meta_key ) {
-		$placeholders = et_theme_builder_wc_placeholders();
-
-		return $placeholders['average_rating'];
+		global $product;
+		return $product->get_average_rating();
 	}
 
 	// Modify verified metadata
@@ -308,3 +226,31 @@ function et_theme_builder_wc_set_review_metadata( $value, $object_id, $meta_key,
 }
 
 add_filter( 'get_comment_metadata', 'et_theme_builder_wc_set_review_metadata', 10, 4 );
+
+/**
+ * Filter `get_the_terms()` output for Theme Builder layout usage. `get_the_term()` is used for
+ * product tags and categories in WC meta module and relies on current post's ID to output product's
+ * tags and categories. In TB settings, post ID is irrelevant as the current layout can be used in
+ * various pages. Thus, simply get the first tags and cats then output it for visual preview purpose
+ *
+ * @since 4.0.10
+ *
+ * @param WP_Term[]|WP_Error $terms    Array of attached terms, or WP_Error on failure.
+ * @param int                $post_id  Post ID.
+ * @param string             $taxonomy Name of the taxonomy.
+ *
+ * @return
+ */
+function et_theme_builder_wc_terms( $terms, $post_id, $taxonomy ) {
+	// Only modify product_cat and product_tag taxonomies; This function is only called in TB's
+	// woocommerceComponent output for current product setting
+	if ( in_array( $taxonomy, array( 'product_cat', 'product_tag' ) ) && empty( $terms ) ) {
+		$tags = get_categories( array( 'taxonomy' => $taxonomy ) );
+
+		if ( isset( $tags[0] ) ) {
+			$terms = array( $tags[0] );
+		}
+	}
+
+	return $terms;
+}

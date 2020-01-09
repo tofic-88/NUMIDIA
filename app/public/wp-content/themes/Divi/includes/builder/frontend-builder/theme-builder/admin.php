@@ -34,12 +34,13 @@ function et_theme_builder_add_admin_page( $parent ) {
 		return;
 	}
 
-	// We register the page with the 'read' capability since we check for the ET cap instead.
+	// We register the page with the 'edit_others_posts' capability since it's the lowest
+	// requirement to use VB and we already checked for the theme_builder ET cap.
 	add_submenu_page(
 		$parent,
 		esc_html__( 'Theme Builder', 'et_builder' ),
 		esc_html__( 'Theme Builder', 'et_builder' ),
-		'read',
+		'edit_others_posts',
 		'et_theme_builder',
 		'et_theme_builder_admin_page'
 	);

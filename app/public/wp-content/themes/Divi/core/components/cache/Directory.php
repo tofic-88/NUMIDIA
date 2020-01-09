@@ -72,14 +72,14 @@ class ET_Core_Cache_Directory {
 		$path             = et_()->path( WP_CONTENT_DIR, 'et-cache' );
 		$url              = content_url( 'et-cache' );
 
-		$can_write  = is_dir( $path ) && $this->wpfs->is_writable( $path );
+		$can_write  = $this->wpfs->is_writable( $path ) && ! is_file( $path );
 		$can_create = ! $can_write && $this->wpfs->is_writable( WP_CONTENT_DIR );
 
-		if ( ! $can_write && ! $can_create && $this->wpfs->is_writable( $uploads_dir_info->path ) ) {
+		if ( ! $can_write && ! $can_create && $this->wpfs->is_writable( $uploads_dir_info->basedir ) ) {
 			// We can create our cache directory in the uploads directory
 			$can_create = true;
-			$path       = et_()->path( $uploads_dir_info->path, 'et-cache' );
-			$url        = et_()->path( $uploads_dir_info->url, 'et-cache' );
+			$path       = et_()->path( $uploads_dir_info->basedir, 'et-cache' );
+			$url        = et_()->path( $uploads_dir_info->baseurl, 'et-cache' );
 		}
 
 		$this->can_write = $can_write || $can_create;
@@ -115,25 +115,21 @@ class ET_Core_Cache_Directory {
 	 * @return WP_Filesystem_Base
 	 */
 	protected function _initialize_wpfs() {
-		if ( isset( $GLOBALS['wp_filesystem'] ) ) {
-			return $this->wpfs = $GLOBALS['wp_filesystem'];
-		}
-
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
-		if ( defined( 'ET_CORE_CACHE_DIR' ) && WP_Filesystem( array(), ET_CORE_CACHE_DIR ) ) {
+		if ( defined( 'ET_CORE_CACHE_DIR' ) && @WP_Filesystem( array(), ET_CORE_CACHE_DIR, true ) ) {
 			// We can write to a user-specified directory
 			return $this->wpfs = $GLOBALS['wp_filesystem'];
 		}
 
-		if ( WP_Filesystem() ) {
+		if ( @WP_Filesystem( array(), false, true ) ) {
 			// We can write to WP_CONTENT_DIR
 			return $this->wpfs = $GLOBALS['wp_filesystem'];
 		}
 
 		$uploads_dir = (object) wp_get_upload_dir();
 
-		if ( WP_Filesystem( array(), $uploads_dir->path ) ) {
+		if ( @WP_Filesystem( array(), $uploads_dir->basedir, true ) ) {
 			// We can write to the uploads directory
 			return $this->wpfs = $GLOBALS['wp_filesystem'];
 		}
@@ -160,7 +156,7 @@ class ET_Core_Cache_Directory {
 	 * @param stdClass $uploads_dir_info (object) wp_get_upload_dir()
 	 */
 	protected function _maybe_adjust_path_for_multisite( $uploads_dir_info ) {
-		if ( et_()->starts_with( $this->path, $uploads_dir_info->path ) || ! is_multisite() ) {
+		if ( et_()->starts_with( $this->path, $uploads_dir_info->basedir ) || ! is_multisite() ) {
 			return;
 		}
 

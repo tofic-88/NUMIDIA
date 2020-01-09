@@ -571,7 +571,7 @@ class ET_Builder_Module_Portfolio extends ET_Builder_Module_Type_PostBased {
 
 								if ( ! empty( $post->featured_image ) ) {
 									$image_attrs['srcset'] = $post->featured_image . ' 479w, ' . $post->post_thumbnail . ' 480w';
-									$image_attrs['sizes']  = '(max-width:479px) 479w, 100vw';
+									$image_attrs['sizes']  = '(max-width:479px) 479px, 100vw';
 								}
 
 								$this->render_image( $post->post_thumbnail, $image_attrs );

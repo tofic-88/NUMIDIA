@@ -68,6 +68,7 @@ class ET_Builder_Plugin_Compat_WooCommerce extends ET_Builder_Plugin_Compat_Base
 
 		// Theme Builder.
 		add_filter( 'et_theme_builder_template_settings_options', array( $this, 'maybe_filter_theme_builder_template_settings_options' ) );
+		add_action( 'et_theme_builder_after_layout_opening_wrappers', array( $this, 'maybe_trigger_woo_hooks_in_theme_builder_body' ) );
 	}
 
 	/**
@@ -307,6 +308,40 @@ class ET_Builder_Plugin_Compat_WooCommerce extends ET_Builder_Plugin_Compat_Base
 	 */
 	public function theme_builder_validate_woocommerce_my_account( $type, $subtype, $id, $setting ) {
 		return ET_Theme_Builder_Request::TYPE_SINGULAR === $type && $id === wc_get_page_id( 'myaccount' );
+	}
+
+	/**
+	 * Trigger Woo hooks before a Theme Builder body layout is rendered
+	 * so stuff like structured data is output.
+	 *
+	 * @since 4.0.10
+	 *
+	 * @param string $layout_type
+	 */
+	public function maybe_trigger_woo_hooks_in_theme_builder_body( $layout_type ) {
+		global $product;
+
+		if ( ET_THEME_BUILDER_BODY_LAYOUT_POST_TYPE !== $layout_type || ! is_singular( 'product' ) ) {
+			return;
+		}
+
+		if ( $product && ! is_a( $product, 'WC_Product' ) ) {
+			// Required for Woo to setup its $product global.
+			the_post();
+		}
+
+		// Make sure builder and non-builder products do not render
+		// anything as this will be taken care of by the
+		// Post Content module in TB, if used.
+		et_builder_wc_disable_default_layout();
+		remove_action(
+			'woocommerce_after_single_product_summary',
+			'et_builder_wc_product_render_layout',
+			5
+		);
+
+		// Load the usual Woo template which triggers all required hooks.
+		wc_get_template_part( 'content', 'single-product' );
 	}
 }
 new ET_Builder_Plugin_Compat_WooCommerce;

@@ -1098,11 +1098,11 @@ class ET_Core_SupportCenter {
 			$et_license = get_option( 'et_automatic_updates_options', array() );
 		}
 
-		if ( ! array_key_exists( 'username', $et_license ) || empty( $et_license['username'] ) ) {
+		if ( ! et_()->array_get( $et_license, 'username' ) ) {
 			return false;
 		}
 
-		if ( ! array_key_exists( 'api_key', $et_license ) || empty( $et_license['api_key'] ) ) {
+		if ( ! et_()->array_get( $et_license, 'api_key' ) ) {
 			return false;
 		}
 
@@ -1127,7 +1127,10 @@ class ET_Core_SupportCenter {
 		// Early exit: internal PHP function `file_get_contents()` appears to be on lockdown
 		if ( ! function_exists( 'file_get_contents' ) ) {
 			$log['error'] = esc_attr__( 'Divi Support Center :: WordPress debug log cannot be read.', 'et-core' );
-			et_error( $log['error'] );
+
+			if ( defined( 'ET_DEBUG' ) ) {
+				et_error( $log['error'] );
+			}
 
 			return $log;
 		}
@@ -1135,7 +1138,10 @@ class ET_Core_SupportCenter {
 		// Early exit: WP_DEBUG_LOG isn't defined in wp-config.php (or it's defined, but it's empty)
 		if ( ! defined( 'WP_DEBUG_LOG' ) || ! WP_DEBUG_LOG ) {
 			$log['error'] = esc_attr__( 'Divi Support Center :: WordPress debug.log is not configured.', 'et-core' );
-			et_error( $log['error'] );
+
+			if ( defined( 'ET_DEBUG' ) ) {
+				et_error( $log['error'] );
+			}
 
 			return $log;
 		}
@@ -1156,7 +1162,10 @@ class ET_Core_SupportCenter {
 		// Early exit: `debug.log` doesn't exist or otherwise can't be read
 		if ( ! isset( $wp_debug_log_path ) || ! file_exists( $wp_debug_log_path ) || ! is_readable( $wp_debug_log_path ) ) {
 			$log['error'] = esc_attr__( 'Divi Support Center :: WordPress debug log cannot be found.', 'et-core' );
-			et_error( $log['error'] );
+
+			if ( defined( 'ET_DEBUG' ) ) {
+				et_error( $log['error'] );
+			}
 
 			return $log;
 		}
