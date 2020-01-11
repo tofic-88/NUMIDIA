@@ -59,23 +59,6 @@
 
 
 
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <div class="container">
 <div class="row">
 
@@ -108,7 +91,7 @@
                                     else: 
                                         // fallback no content
                                     endif;
-                                    wp_reset_postdata();
+                                        wp_reset_postdata();
                                     ?>
                             </div>  
 

@@ -4,7 +4,7 @@ Theme URI: https://www.numidia-web.ca
 Author: Numidia
 Author URI: https://www.numidia-web.ca
 Description: A basic theme using the Bootstrap framework.
-Version: 1.0
+Version: 1.2
 Text Domain: bootstrapstarter
 */
 
@@ -102,7 +102,7 @@ font-family: 'Passion One', cursive;
 
 
 .slider-container {
-  padding-top: 0px;
+  padding-top: 60px;
   /* padding-bottom: 20px; */
 }
 
@@ -111,7 +111,9 @@ font-family: 'Passion One', cursive;
   min-height: 300px;
 }
 
-
+.navbar{
+  background-color: black;
+}
 
 .header-single-post-content{
       padding: 100px 0;
@@ -126,7 +128,7 @@ font-family: 'Passion One', cursive;
 
 .lebas-carousel-container{
   min-height: 200px;
-  background: green;
+  background: black;
   padding: 4%;
   display: flex;
   margin-bottom: 20px;
