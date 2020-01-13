@@ -1,6 +1,6 @@
 <?php get_header(); ?>
 
-    <div class="container-fluid slider-container">
+<div class="container-fluid slider-container">
         <div id="demo" class="carousel slide" data-ride="carousel">
 
         <!-- Indicators -->
@@ -13,25 +13,25 @@
         <!-- The slideshow -->
         <div class="carousel-inner">
             <div class="carousel-item active">
-            <img src="<?php echo get_theme_file_uri('images/la.jpg') ?>" alt="Los Angeles">
-                 <div class="carousel-caption">
+            <img src="<?php echo get_theme_file_uri('images/1.png') ?>" alt="Numidia Web">
+                 <!-- <div class="carousel-caption">
                     <h1>Los Angeles</h1>
                     <p>We had such a great time in LA!</p>
-                </div>
+                </div> -->
             </div>
             <div class="carousel-item">
-            <img src="<?php echo get_theme_file_uri('images/chicago.jpg') ?>" alt="Chicago">
-                 <div class="carousel-caption">
+            <img src="<?php echo get_theme_file_uri('images/2.png') ?>" alt="Responsive design">
+                 <!-- <div class="carousel-caption">
                     <h1>Bougie</h1>
                     <p>Ma ville de naissance oh Béjaia</p>
-                </div>
+                </div> -->
             </div>
             <div class="carousel-item">
-            <img src="<?php echo get_theme_file_uri('images/ny.jpg') ?>" alt="New York">
-                 <div class="carousel-caption">
+            <img src="<?php echo get_theme_file_uri('images/3.png') ?>" alt="Hosting web">
+                 <!-- <div class="carousel-caption">
                     <h1>Rome</h1>
                     <p>Rome is historique city</p>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -107,7 +107,8 @@
 
                    
 
-                    <div class="col-md-4">
+                    <div class="col-md-12">
+                        <?php the_post_thumbnail('small-thumbnails'); ?>
                         <h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
                         <?php the_content(); ?>
                         <p><a class="btn btn-secondary" href="<?php the_permalink(); ?>" role="button">Lisez plus &raquo;</a></p>

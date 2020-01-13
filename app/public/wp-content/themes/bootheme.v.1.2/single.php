@@ -16,7 +16,9 @@
   </div>
 </div>
 
-
+<div class="container">
+<?php the_post_thumbnail('banner-image'); ?>
+</div>
 
 <div class="container">
 <div class="row">
@@ -30,8 +32,8 @@
                 <div class="card-content">
                     <h2 class="blog-post-title"><?php the_title(); ?></h2>
                     <p class="blog-post-meta"><?php the_date(); ?> by <?php the_author(); ?></p>
-                    <?php the_content(); ?>
-
+                    <?php  the_content(); ?>
+                    <!-- <img src="<?php  //the_post_thumbnail_url() ?>" class="rounded-circle" alt="image post" width="250" height="250"> -->
                     <i style="color:red;">single.php</i>
                 </div><!-- /.Card content -->
                 <?php

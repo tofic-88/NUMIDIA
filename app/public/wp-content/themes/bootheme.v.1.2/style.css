@@ -50,6 +50,10 @@ font-family: 'Passion One', cursive;
   }
 }
 
+.jumbotron-container{
+  background-color: blue;
+  color: white;
+}
 
 
 /*
@@ -128,19 +132,19 @@ font-family: 'Passion One', cursive;
 
 .lebas-carousel-container{
   min-height: 200px;
-  background: black;
+  background: blue;
   padding: 4%;
   display: flex;
   margin-bottom: 20px;
   /* justify-content: space-around; */
 }
 .lebas-carousel{
-  font-family: 'Noto Sans SC', sans-serif;
-  font-family: 'Passion One', cursive;
+  /* font-family: 'Noto Sans SC', sans-serif;
+  font-family: 'Passion One', cursive; */
   margin: auto;
   color: aliceblue;
   text-align: center;
-  font-size: 1.8em;
+  font-size: 1.5em;
   font-weight: bold;
   line-height: 2;
 }

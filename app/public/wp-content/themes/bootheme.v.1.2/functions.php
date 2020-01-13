@@ -58,6 +58,38 @@
         }
         add_action( 'widgets_init', 'wpb_init_widgets' );
 //-------------------------------------------------------------------------------------------------------------------------------------------
+  
+
+function bootheme_setup(){
+
+    //add features image support
+    add_theme_support('post-thumbnails');
+    add_image_size( 'small-thumbnails', 180, 120, true);
+    add_image_size( 'banner-image', 1000, 400, true);
+
+
+}
+
+add_action ('after_setup_theme', 'bootheme_setup');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Costomize here some line -----------------------------------------------------------
 // function add_section_bar(){

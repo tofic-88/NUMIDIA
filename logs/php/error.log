@@ -7,3 +7,8 @@ Stack trace:
 #4 C:\Users\15142\Local Sites\numidia-web\app\public\wp-admin\includes\class-theme-upgrader.php(428): do_action('upgrader_proces...', Object(Theme_Upgrader), Array)
 #5 C:\Users\15142\Local Sites\numidia-web\app\public\wp-admin\includes\ajax-actions.php(4141): Theme_Upgrader->bulk_upgrade(Array)
 #6 C:\Users\15142\Local Sites\numidia-web\app\pub in C:\Users\15142\Local Sites\numidia-web\app\public\wp-content\themes\Divi\includes\builder\core.php on line 5873
+[13-Jan-2020 01:30:43 UTC] PHP Parse error:  syntax error, unexpected 'x150' (T_STRING), expecting ')' in C:\Users\15142\Local Sites\numidia-web\app\public\wp-content\themes\bootheme.v.1.2\single.php on line 34
+[13-Jan-2020 01:33:38 UTC] PHP Parse error:  syntax error, unexpected '$size' (T_VARIABLE), expecting '(' in C:\Users\15142\Local Sites\numidia-web\app\public\wp-content\themes\bootheme.v.1.2\single.php on line 34
+[13-Jan-2020 07:33:22 UTC] PHP Parse error:  syntax error, unexpected 'the_content' (T_STRING) in C:\Users\15142\Local Sites\numidia-web\app\public\wp-content\themes\bootheme.v.1.2\single.php on line 33
+[13-Jan-2020 07:38:13 UTC] PHP Parse error:  syntax error, unexpected ',' in C:\Users\15142\Local Sites\numidia-web\app\public\wp-content\themes\bootheme.v.1.2\functions.php on line 68
+[13-Jan-2020 07:38:16 UTC] PHP Parse error:  syntax error, unexpected ',' in C:\Users\15142\Local Sites\numidia-web\app\public\wp-content\themes\bootheme.v.1.2\functions.php on line 68
