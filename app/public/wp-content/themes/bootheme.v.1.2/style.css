@@ -251,3 +251,13 @@ font-family: 'Passion One', cursive;
 	margin: 0 0 10px 0;
 	box-sizing: border-box;
 }
+
+.appelez-nous-span{
+  color: orange;
+  font-weight: bold;
+}
+
+.title-section{
+  color: gray;
+  font-size: 3.5rem;
+}

@@ -2,8 +2,8 @@
 
 <div class="container-fluid header-single-post">
     <div class="header-single-post-content">
-        <h1><?php the_title(); ?></h1>
-        <!-- <p>Ceci est le fichier single.php qui montre le reste de contenu de cette article</p> -->
+        <h1><?php the_post_thumbnail('banner-image'); ?></h1>
+         <!-- <p>Ceci est le fichier single.php qui montre le reste de contenu de cette article</p>  -->
     </div>
 </div>
 
@@ -22,7 +22,6 @@
     ?>
     <div class="card-content">
         <h2 class="blog-post-title"><?php the_title(); ?></h2>
-        <p class="blog-post-meta"><?php the_date(); ?> by <?php the_author(); ?></p>
         <?php the_content(); ?>
 
 

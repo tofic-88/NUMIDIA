@@ -57,7 +57,7 @@
 </div>
 
   <div class="container">
-    <h2>Nos services</h2>
+    <h2 class="title-section">Nos services</h2><hr>
   </div>
 
 <div class="container">
@@ -69,7 +69,7 @@
                                     if ($infrontPosts->have_posts()) : 
                                         while ($infrontPosts->have_posts()) : $infrontPosts->the_post( ); ?>
                                             <div class="p-2 flex-fill bd-highlight">
-                                                    <h2><a href="<?php the_permalink(); ?>"><?php the_title() ?></a></h2>       
+                                                    <h3><?php the_title() ?></h3>       
                                                     <?php the_excerpt(); ?>                      
                                             </div>
                                     <?php    endwhile;
@@ -92,8 +92,8 @@
   <div class="container">
     <h1 class="display-3">Besoin de site web?</h1>
     <!-- <i style="color:red;">front-page.php</i> -->
-    <h4>Si vous cherchez à augmenter votre clientèle et avoir une place sur le web, veuillez nous contacter, nous sommes là pour vous aider!</h4>
-    <p><a class="btn btn-primary btn-lg" href="#" role="button">Contactez nous &raquo;</a></p>
+    <h4>Si vous cherchez à augmenter votre clientèle et avoir une place sur le web, veuillez nous contacter, nous sommes là pour vous aider!, <span class="appelez-nous-span">Appelez-nous au: 514-237-1678</span></h4>
+    <!-- <p><a class="btn btn-primary btn-lg" href="#" role="button">Contactez nous &raquo;</a></p> -->
   </div>
 </div>
 
@@ -104,31 +104,31 @@
 </main>
 
 <div class="container">
-    <h2>Nos Clients</h2>
+    <h2 class="title-section">Nos Clients</h2><hr>
   </div>
 
 <div class="container">
   <div class="row">
 
      <div class="col">
-            <img src="<?php echo get_theme_file_uri('images/paris.jpg')  ?>" class="rounded" alt="Cinque Terre" width="100%">
+            <img src="<?php echo get_theme_file_uri('images/coda.png')  ?>" class="rounded" alt="Cinque Terre" width="100%">
             <h3>Codamark</h3>
-            <p>making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, […]</p>
-            <button type="button" class="btn btn-warning">visitez le site</button>
+            <!-- <p>making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, […]</p> -->
+            <button type="button" class="btn btn-warning">Visitez</button>
      </div>
 
      <div class="col">
-           <img src="<?php echo get_theme_file_uri('images/paris.jpg')  ?>" class="rounded" alt="Cinque Terre" width="100%">
-            <h3>ECF Montreal</h3>
-            <p>making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, […]</p>
-            <button type="button" class="btn btn-warning">visitez le site</button>
-     </div>
-
-     <div class="col">
-          <img src="<?php echo get_theme_file_uri('images/paris.jpg')  ?>" class="rounded" alt="Cinque Terre" width="100%">
+           <img src="<?php echo get_theme_file_uri('images/rabais.png')  ?>" class="rounded" alt="Cinque Terre" width="100%">
             <h3>Rabais Assure</h3>
-            <p>making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, […]</p>
-            <button type="button" class="btn btn-warning">visitez le site</button>
+            <!-- <p>making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, […]</p> -->
+            <button type="button" class="btn btn-warning">Visitez</button>
+     </div>
+
+     <div class="col">
+          <img src="<?php echo get_theme_file_uri('images/uwa.png')  ?>" class="rounded" alt="Cinque Terre" width="100%">
+            <h3>United World Alliance</h3>
+            <!-- <p>making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, […]</p> -->
+            <button type="button" class="btn btn-warning">Visitez</button>
      </div>
 
 
